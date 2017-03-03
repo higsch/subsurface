@@ -1,4 +1,4 @@
-package de.tum.bio.SequenceViewer;
+package de.tum.bio.sequenceviewer;
 
 import java.util.List;
 import java.util.Map.Entry;

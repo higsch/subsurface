@@ -43,6 +43,7 @@ public class VolcanoPlotDot extends StackPane {
 			@Override
 			public void handle(MouseEvent mouseEvent) {
 				getChildren().setAll(label);
+				label.toFront();
 				toFront();
 	        }
 	    });

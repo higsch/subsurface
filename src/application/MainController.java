@@ -12,7 +12,6 @@ import org.xmlpull.v1.XmlPullParserException;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 
-import de.tum.bio.SequenceViewer.SequenceViewer;
 import de.tum.bio.analysis.Analysis;
 import de.tum.bio.analysis.AnalysisComponent;
 import de.tum.bio.analysis.AnalysisComponentType;
@@ -26,6 +25,7 @@ import de.tum.bio.proteomics.ProteinGroupsTableHeaders;
 import de.tum.bio.proteomics.StatisticsFile;
 import de.tum.bio.proteomics.StatisticsTableHeaders;
 import de.tum.bio.proteomics.Tools;
+import de.tum.bio.sequenceviewer.SequenceViewer;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
@@ -369,10 +369,16 @@ public class MainController {
 	}
 	
 	public void sequenceViewDigest() {
-		sequenceViewer.inSilicoDigest(choiceEnzyme.getSelectionModel().getSelectedItem());
+		if (choiceEnzyme.getSelectionModel().getSelectedItem() != null) {
+			sequenceViewer.inSilicoDigest(choiceEnzyme.getSelectionModel().getSelectedItem());
+		}
 	}
 	
 	public void sequenceViewShowExperimentIntensities() {
 		sequenceViewer.showExperimentIntensities();
+	}
+	
+	public void sequenceViewCalculateAaProfiles() {
+		sequenceViewer.generateAaIntensityProfiles();
 	}
 }

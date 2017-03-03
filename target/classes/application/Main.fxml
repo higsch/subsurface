@@ -290,6 +290,17 @@
                                           <Tooltip text="Show experiment intensities" />
                                        </tooltip>
                                        <HBox.margin>
+                                          <Insets bottom="2.0" left="20.0" top="2.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button minHeight="35.0" minWidth="35.0" mnemonicParsing="false" onAction="#sequenceViewCalculateAaProfiles" prefHeight="35.0" prefWidth="35.0" text="%fa.line_chart">
+                                       <font>
+                                          <Font name="FontAwesome" size="13.0" />
+                                       </font>
+                                       <tooltip>
+                                          <Tooltip text="Calculate amino acid intensity profiles" />
+                                       </tooltip>
+                                       <HBox.margin>
                                           <Insets bottom="2.0" left="5.0" top="2.0" />
                                        </HBox.margin>
                                     </Button>

@@ -1,4 +1,4 @@
-package de.tum.bio.SequenceViewer;
+package de.tum.bio.sequenceviewer;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -69,7 +69,15 @@ public class SequenceViewer extends BorderPane {
 	private int proteinGroupId;
 	
 	private String proteinSequence;
+	/*
+	 * Holds the peptide Ids for each amino acid position of the protein.
+	 */
 	private Map<Integer, List<Integer>> peptideMap;
+	
+	/*
+	 * Holds the intensities for each amino acid position and specific experiment.
+	 */
+	private Map<String, Map<Integer, Long>> experimentIntensityMap;
 	
 	private DoubleProperty progressProperty = new SimpleDoubleProperty(0.0);
 	private StringProperty statusProperty = new SimpleStringProperty();
@@ -354,7 +362,7 @@ public class SequenceViewer extends BorderPane {
 		}
 		
 		// Initialize experimentIntensityMap
-		Map<String, Map<Integer, Long>> experimentIntensityMap = new HashMap<>();
+		experimentIntensityMap = new HashMap<>();
 		for (String experimentName : peptideId.getSummary().getExperimentNames()) {
 			experimentIntensityMap.put(experimentName, new HashMap<>());
 		}
@@ -383,6 +391,7 @@ public class SequenceViewer extends BorderPane {
 				}
 			}
 		}
+		System.out.println(experimentIntensityMap);
 		
 		experimentIntensities = new VBox();
 		for (String experimentName : peptideId.getSummary().getExperimentNames()) {
@@ -396,6 +405,13 @@ public class SequenceViewer extends BorderPane {
 		}
 		
 		centerVBox.getChildren().add(experimentIntensities);
+	}
+	
+	public void generateAaIntensityProfiles() {
+		if (experimentIntensityMap == null) {
+			showExperimentIntensities();
+		}
+		
 	}
 	
 	private int assembleIntensityRow(GridPane grid, Map<Integer, Long> intensityMap, long maxIntensity, long minIntensity, int column, int row) {

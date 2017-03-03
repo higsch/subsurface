@@ -1,4 +1,4 @@
-package de.tum.bio.SequenceViewer;
+package de.tum.bio.sequenceviewer;
 
 import de.tum.bio.proteomics.Modification;
 import javafx.geometry.Pos;
