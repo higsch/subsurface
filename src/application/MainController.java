@@ -360,7 +360,7 @@ public class MainController {
 	
 	private void updateSequenceView() {
 		sequenceViewParent.getChildren().clear();
-		sequenceViewer = new SequenceViewer(analysisHandler.getAnalysis().getPeptideId(), analysisHandler.getSelectedProteinGroupId(), sequenceViewParent.heightProperty());
+		sequenceViewer = new SequenceViewer(mainApp.getStage(), analysisHandler.getAnalysis().getPeptideId(), analysisHandler.getSelectedProteinGroupId(), sequenceViewParent.heightProperty());
 		progressBar.progressProperty().bind(sequenceViewer.progressProperty());
 		statusLabel.textProperty().bind(sequenceViewer.statusProperty());
 		sequenceViewer.readyProperty().addListener(c -> {

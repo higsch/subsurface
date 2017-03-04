@@ -22,7 +22,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
 	
 	private Stage primaryStage;
-	MainController controller;
+	private MainController controller;
 	@SuppressWarnings("unused")
 	private AnalysisHandler analysisHandler;
 	

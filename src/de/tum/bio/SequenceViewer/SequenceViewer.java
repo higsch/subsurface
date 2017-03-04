@@ -43,6 +43,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 
 public class SequenceViewer extends BorderPane {
 	
@@ -54,6 +55,8 @@ public class SequenceViewer extends BorderPane {
 	private final int CONTENT_COLUMN = 2;
 	
 	private final int VGAP = 16;
+	
+	private Stage owner;
 	
 	private ReadOnlyDoubleProperty parentHightProperty;
 	
@@ -84,7 +87,8 @@ public class SequenceViewer extends BorderPane {
 	private StringProperty statusProperty = new SimpleStringProperty();
 	private BooleanProperty readyProperty = new SimpleBooleanProperty(false);
 	
-	public SequenceViewer(PeptideId peptideId, int proteinGroupId, ReadOnlyDoubleProperty parentHightProperty) {
+	public SequenceViewer(Stage owner, PeptideId peptideId, int proteinGroupId, ReadOnlyDoubleProperty parentHightProperty) {
+		this.owner = owner;
 		setPeptideId(peptideId);
 		setProteinGroupId(proteinGroupId);
 		this.parentHightProperty = parentHightProperty;
@@ -412,7 +416,8 @@ public class SequenceViewer extends BorderPane {
 			showExperimentIntensities();
 		}
 		
-		AaProfileGenerator.make(experimentIntensityMap, proteinSequence);
+		AaProfileGenerator aaProfileGenerator = new AaProfileGenerator(owner);
+		aaProfileGenerator.make(experimentIntensityMap, proteinSequence);
 	}
 	
 	private int assembleIntensityRow(GridPane grid, Map<Integer, Long> intensityMap, long maxIntensity, long minIntensity, int column, int row) {

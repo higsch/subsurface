@@ -129,7 +129,11 @@ public final class Tools {
 	}
 	
 	public static double log(long x, int base) {
-	    return Math.log(x) / Math.log(base);
+		if (x == 0) {
+			return Double.NaN;
+		} else {
+			return Math.log(x) / Math.log(base);
+		}
 	}
 	
 	public static List<List<Integer>> simpleMap(String sequenceFrom, String sequenceTo) {
