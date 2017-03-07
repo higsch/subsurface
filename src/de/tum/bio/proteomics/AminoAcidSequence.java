@@ -79,7 +79,7 @@ public abstract class AminoAcidSequence {
 	
 	public void assignModificationToAminoAcid(Modification modification, int position) {
 		// Calculate real position
-		List<List<Integer>> indices = Tools.simpleMap(stringSequence.get(), modification.getSequenceWindow());
+		List<List<Integer>> indices = Toolbox.simpleMap(stringSequence.get(), modification.getSequenceWindow());
 		for (List<Integer> index : indices) {
 			getAminoAcidAtPosition(position - index.get(0) + 1).setModification(modification);
 		}

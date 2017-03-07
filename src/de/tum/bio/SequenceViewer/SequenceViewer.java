@@ -417,7 +417,7 @@ public class SequenceViewer extends BorderPane {
 		}
 		
 		AaProfileGenerator aaProfileGenerator = new AaProfileGenerator(owner);
-		aaProfileGenerator.make(experimentIntensityMap, proteinSequence);
+		aaProfileGenerator.make(experimentIntensityMap, peptideId.getProteinGroupById(proteinGroupId));
 	}
 	
 	private int assembleIntensityRow(GridPane grid, Map<Integer, Long> intensityMap, long maxIntensity, long minIntensity, int column, int row) {

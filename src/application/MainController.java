@@ -24,7 +24,7 @@ import de.tum.bio.proteomics.ProteinGroup;
 import de.tum.bio.proteomics.ProteinGroupsTableHeaders;
 import de.tum.bio.proteomics.StatisticsFile;
 import de.tum.bio.proteomics.StatisticsTableHeaders;
-import de.tum.bio.proteomics.Tools;
+import de.tum.bio.proteomics.Toolbox;
 import de.tum.bio.sequenceviewer.SequenceViewer;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -151,7 +151,7 @@ public class MainController {
         
         // Initialize volcano plot
         volcanoPlotXAxis.setLabel("log2 Enrichment");
-		volcanoPlotYAxis.setLabel("-Log10 p-value");
+		volcanoPlotYAxis.setLabel("-log10 p-value");
 		volcanoPlot.legendVisibleProperty().set(false);
 		
 		// Initialize sequence viewer wrapper
@@ -215,7 +215,7 @@ public class MainController {
 				}
 			}
 		});
-		
+
 		// React to protein group selection
 		tableProteinGroups.getSelectionModel().getSelectedItems().addListener((ListChangeListener<ProteinGroup>) c -> {
 			ProteinGroup selectedProteinGroup = c.getList().get(0);
@@ -291,7 +291,7 @@ public class MainController {
 				fastaFile = (FastaFile) item.getValue();
 			}
 		}
-		Tools.combineSequencesAndProteinGroups(fastaFile, peptideId.getAllProteinGroups(), mainApp);
+		Toolbox.combineSequencesAndProteinGroups(fastaFile, peptideId.getAllProteinGroups(), mainApp);
 		peptideId.setSequencesAdded(true);
 	}
 	
@@ -310,7 +310,7 @@ public class MainController {
 				updateVolcanoPlot(null);
 			});
 		}
-		Tools.combineStatisticsAndProteinGroups(statisticsFile, peptideId, mainApp);
+		Toolbox.combineStatisticsAndProteinGroups(statisticsFile, peptideId, mainApp);
 	}
 	
 	public void openAboutDialog(ActionEvent event) {

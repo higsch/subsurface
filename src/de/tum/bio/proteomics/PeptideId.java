@@ -140,7 +140,7 @@ public class PeptideId implements AnalysisComponent {
 		ProteinGroup protein = proteins.get(proteinGroupId);
 		List<Peptide> peptides = new ArrayList<>();
 		for (String sequence : sequences) {
-			List<List<Integer>> positions = Tools.simpleMap(sequence, protein.getSequenceAsString());
+			List<List<Integer>> positions = Toolbox.simpleMap(sequence, protein.getSequenceAsString());
 			for (List<Integer> position : positions) {
 				Peptide peptide = new Peptide(nextPeptideId, sequence, position.get(0), position.get(1), 0);
 				peptide.setProteinGroupsIds(String.valueOf(proteinGroupId));

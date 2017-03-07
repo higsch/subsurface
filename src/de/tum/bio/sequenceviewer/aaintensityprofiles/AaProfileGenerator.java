@@ -3,15 +3,18 @@ package de.tum.bio.sequenceviewer.aaintensityprofiles;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Map.Entry;
 
+import application.Main;
+import de.tum.bio.proteomics.ProteinGroup;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class AaProfileGenerator extends Stage {
@@ -22,8 +25,8 @@ public class AaProfileGenerator extends Stage {
 		initOwner(owner);
 	}
 	
-	public void make(Map<String, Map<Integer, Long>> experimentIntensityMap, String sequence) {
-		AaProfileContainer container = new AaProfileContainer(sequence);
+	public void make(Map<String, Map<Integer, Long>> experimentIntensityMap, ProteinGroup protein) {
+		AaProfiler container = new AaProfiler(protein);
 		
 		Map<Integer, Map<String, Long>> profileMap = new HashMap<>();
 		
@@ -40,14 +43,17 @@ public class AaProfileGenerator extends Stage {
 		showWindow(container);
 	}
 	
-	private void showWindow(AaProfileContainer aaProfileContainer) {
+	private void showWindow(AaProfiler aaProfileContainer) {
 		try {
+			Font.loadFont(Main.class.getResourceAsStream("/font/fontawesome-webfont.ttf"), 10);
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("AaProfileView.fxml"));
+			loader.setResources(ResourceBundle.getBundle("fontawesome"));
 			BorderPane root = (BorderPane) loader.load();
 			controller = loader.getController();
-			controller.setAaProfileContainer(aaProfileContainer);
+			controller.init(this);
+			controller.setAaProfiler(aaProfileContainer);
 			
-			Scene scene = new Scene(root, 600, 200);
+			Scene scene = new Scene(root, 1000, 600);
 			scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
 			setScene(scene);
 			
@@ -56,7 +62,8 @@ public class AaProfileGenerator extends Stage {
 				close();
 			});
 			
-			initModality(Modality.APPLICATION_MODAL); 
+			setAlwaysOnTop(true);
+			//initModality(Modality.APPLICATION_MODAL); 
 			showAndWait();
 		} catch (IOException e) {
 			Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
