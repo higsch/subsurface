@@ -61,9 +61,7 @@ public class AaProfileViewController {
 				updateChart(null);
 			} else {
 				buttonCorrelation.setDisable(false);
-				List<Character> selectedResidues= new ArrayList<>();
-				selectedResidues.add(n.charAt(0));
-				updateChart(selectedResidues);
+				updateChart(getAaListFromString(n));
 			}
 		});
 	}
@@ -95,12 +93,14 @@ public class AaProfileViewController {
 		yAxis.setForceZeroInRange(false);
 		if (residues == null) {
 			chart.setData(aaProfiler.getAllXYChartSeries());
+			if (webViewPearsonAdded) {
+				vBoxContent.getChildren().remove(webViewPearson);
+			}
 		} else {
 			chart.setData(aaProfiler.getAllXYChartSeriesByResidue(residues));
-		}
-		
-		if (webViewPearsonAdded) {
-			computeCorrelationMatrix();
+			if (webViewPearsonAdded) {
+				computeCorrelationMatrix();
+			}
 		}
 	}
 	
