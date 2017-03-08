@@ -35,7 +35,13 @@ public class AaProfileGenerator extends Stage {
 				if (!profileMap.containsKey(positionEntry.getKey())) {
 					profileMap.put(positionEntry.getKey(), new HashMap<>());
 				}
-				profileMap.get(positionEntry.getKey()).put(experimentEntry.getKey(), positionEntry.getValue());
+				Long intensity;
+				if (positionEntry.getValue() == 0.0) {
+					intensity = null;
+				} else {
+					intensity = positionEntry.getValue();
+				}
+				profileMap.get(positionEntry.getKey()).put(experimentEntry.getKey(), intensity);
 			}
 		}
 	
