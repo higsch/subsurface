@@ -73,10 +73,8 @@ public class AaProfileViewController {
 	public void setAaProfiler(AaProfiler aaProfiler) {
 		this.aaProfiler = aaProfiler;
 		
-		List<Character> selectedResidues= new ArrayList<>();
-		selectedResidues.add("K".charAt(0));
 		choiceAminoAcid.getSelectionModel().select("K");
-		updateChart(selectedResidues);
+		updateChart(getAaListFromString("K"));
 		
 		labelProteinId.setText(aaProfiler.getProteinIds());
 	}
@@ -95,6 +93,7 @@ public class AaProfileViewController {
 			chart.setData(aaProfiler.getAllXYChartSeries());
 			if (webViewPearsonAdded) {
 				vBoxContent.getChildren().remove(webViewPearson);
+				webViewPearsonAdded = false;
 			}
 		} else {
 			chart.setData(aaProfiler.getAllXYChartSeriesByResidue(residues));
