@@ -126,7 +126,6 @@ public class AaProfiler {
 			for (Entry<Integer, List<Double>> compProfile : profiles.entrySet()) {
 				Double coeff = cor.correlateOverlap(convertToDoubleArray(profile.getValue().toArray()), convertToDoubleArray(compProfile.getValue().toArray()));
 				correlationMap.get(String.valueOf(profile.getKey())).put(String.valueOf(compProfile.getKey()), (double) coeff);
-				System.out.println(coeff);
 				if (!coeff.isNaN() && coeff.doubleValue() != 1.0) {
 					sum += Toolbox.fishersZ(coeff.doubleValue());
 				}
