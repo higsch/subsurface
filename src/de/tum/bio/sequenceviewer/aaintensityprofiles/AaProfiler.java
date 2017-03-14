@@ -104,7 +104,7 @@ public class AaProfiler {
 					}
 					double intensity;
 					if (dataPoint.getValue() == null) {
-						intensity = Double.NaN;
+						intensity = 0d; //Double.NaN;
 					} else {
 						intensity = (double) dataPoint.getValue();
 					}
@@ -122,19 +122,20 @@ public class AaProfiler {
 			if (!correlationMap.containsKey(String.valueOf(profile.getKey()))) {
 				correlationMap.put(String.valueOf(profile.getKey()), new HashMap<String, Double>());
 			}
+			
 			double sum = 0d;
 			for (Entry<Integer, List<Double>> compProfile : profiles.entrySet()) {
 				Double coeff = cor.correlateOverlap(convertToDoubleArray(profile.getValue().toArray()), convertToDoubleArray(compProfile.getValue().toArray()));
 				correlationMap.get(String.valueOf(profile.getKey())).put(String.valueOf(compProfile.getKey()), (double) coeff);
 				if (!coeff.isNaN() && coeff.doubleValue() != 1.0) {
-					sum += Toolbox.fishersZ(coeff.doubleValue());
+					sum += coeff;
 				}
 			}
 			int nonZeroValues = Toolbox.getNumberOfNonNaNValues(profile.getValue());
 			if (nonZeroValues > 0) {
-				correlationMap.get(String.valueOf(profile.getKey())).put("Sum of z", sum/nonZeroValues);
+				correlationMap.get(String.valueOf(profile.getKey())).put("Sum", sum/nonZeroValues);
 			} else {
-				correlationMap.get(String.valueOf(profile.getKey())).put("Sum of z", 0.0);
+				correlationMap.get(String.valueOf(profile.getKey())).put("Sum", 0.0);
 			}
 		}
 		

@@ -94,7 +94,7 @@ public final class AnalysisComponentOpener {
 						evidenceMatcher.getStatusProperty().addListener((obs, oldStatus, newStatus) -> updateMessage(newStatus));
 						evidenceMatcher.match(peptideId, txtDirectory, null);
 						
-						updateMessage("Done.");
+						updateMessage("");
 					
 					return peptideId;
 				}
@@ -116,8 +116,8 @@ public final class AnalysisComponentOpener {
 			});
 			readTask.exceptionProperty().addListener((observable, oldValue, newValue) ->  {
 				if(newValue != null) {
-					Exception ex = (Exception) newValue;
-				    ex.printStackTrace();
+					Exception e = (Exception) newValue;
+				    e.printStackTrace();
 				}
 			});
 			mainApp.getProgressBar().progressProperty().bind(readTask.progressProperty());
@@ -147,7 +147,7 @@ public final class AnalysisComponentOpener {
 							Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
 							alert.showAndWait();
 						}
-						updateMessage("Done.");
+						updateMessage("");
 						return statisticsFile;
 					}
 					
@@ -193,7 +193,7 @@ public final class AnalysisComponentOpener {
 							alert.showAndWait();
 						}
 					}
-					updateMessage("Done.");
+					updateMessage("");
 					return fastaFile;
 				}
 				

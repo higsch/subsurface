@@ -193,9 +193,11 @@ public class SequenceViewer extends BorderPane {
 				readyProperty.set(true);
 			});
 			task.setOnFailed(workerStateEvent -> {
-				Alert alert = new Alert(AlertType.ERROR, workerStateEvent.getEventType().getName(), ButtonType.OK);
+				task.getException().printStackTrace(System.out);
+				Alert alert = new Alert(AlertType.ERROR, task.getException().getMessage(), ButtonType.OK);
 				alert.showAndWait();
 			});
+			
 			progressProperty.bind(task.progressProperty());
 			statusProperty.bind(task.messageProperty());
 			new Thread(task).start();
@@ -229,7 +231,9 @@ public class SequenceViewer extends BorderPane {
 	
 	private int generateSequenceRepresentation(int column, int row, GridPane grid) {
 		for (int i = 0; i <= ((int) Math.ceil(proteinSequence.length() / CANVAS_SIZE)); i++) {
-			grid.add(createSequenceCanvas(proteinSequence.substring((i)*CANVAS_SIZE)), column+(i*CANVAS_SIZE), row, proteinSequence.substring((i)*CANVAS_SIZE).length(), 1);
+			if (!proteinSequence.substring((i)*CANVAS_SIZE).isEmpty()) {
+				grid.add(createSequenceCanvas(proteinSequence.substring((i)*CANVAS_SIZE)), column+(i*CANVAS_SIZE), row, proteinSequence.substring((i)*CANVAS_SIZE).length(), 1);
+			}
 		}
 		
 		for (int i = 1; i <= proteinSequence.length(); i++) {
@@ -285,7 +289,16 @@ public class SequenceViewer extends BorderPane {
 		peptideRepresentations.sort(new Comparator<SequenceViewerPeptide>() {
 			@Override
 			public int compare(SequenceViewerPeptide o1, SequenceViewerPeptide o2) {
-				return Integer.valueOf(o1.getStartPosition()).compareTo(Integer.valueOf(o2.getEndPosition()));
+				if (o1.getStartPosition() == o2.getStartPosition()) {
+					return 1;
+				}
+				if (o1.getStartPosition() > o2.getStartPosition()) {
+					return 1;
+				}
+				if (o1.getStartPosition() < o2.getStartPosition()) {
+					return -1;
+				}
+				return 1;
 			}
 		});
 		Map<SequenceViewerPeptide, Integer> peptideRepresentationsMap = assignPeptideToRow(peptideRepresentations, row);
@@ -423,7 +436,9 @@ public class SequenceViewer extends BorderPane {
 	private int assembleIntensityRow(GridPane grid, Map<Integer, Long> intensityMap, long maxIntensity, long minIntensity, int column, int row) {
 		for (int i = 0; i <= ((int) Math.ceil(intensityMap.size() / CANVAS_SIZE)); i++) {
 			int start = (i*CANVAS_SIZE) + 1;
-			grid.add(createIntensityCanvas(intensityMap, start, maxIntensity, minIntensity), i*CANVAS_SIZE+column, row, intensityMap.size() - (i*CANVAS_SIZE+column), 1);
+			if (intensityMap.size() - (i*CANVAS_SIZE+column) > 0) {
+				grid.add(createIntensityCanvas(intensityMap, start, maxIntensity, minIntensity), i*CANVAS_SIZE+column, row, intensityMap.size() - (i*CANVAS_SIZE+column), 1);
+			}
 		}
 		return row+1;
 	}
@@ -475,5 +490,9 @@ public class SequenceViewer extends BorderPane {
 
 	public BooleanProperty readyProperty() {
 		return readyProperty;
+	}
+	
+	public boolean isReady() {
+		return readyProperty.get();
 	}
 }

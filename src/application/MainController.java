@@ -26,6 +26,7 @@ import de.tum.bio.proteomics.StatisticsFile;
 import de.tum.bio.proteomics.StatisticsTableHeaders;
 import de.tum.bio.proteomics.Toolbox;
 import de.tum.bio.sequenceviewer.SequenceViewer;
+import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
@@ -58,9 +59,10 @@ public class MainController {
 	private Stage stage;
 	private AnalysisHandler analysisHandler = AnalysisHandler.getInstance();
 	
-	private SequenceViewer sequenceViewer;
+	private SequenceViewer sequenceViewer = null;
 	
 	private EnzymeFactory enzymes = EnzymeFactory.getInstance();
+	private InvalidationListener sequenceViewerReadyListener = null;
 	
 	@FXML
 	MenuItem menuItemOpenMaxQuant;
@@ -359,13 +361,18 @@ public class MainController {
 	}
 	
 	private void updateSequenceView() {
-		sequenceViewParent.getChildren().clear();
+		if (sequenceViewer != null) {
+			sequenceViewer.readyProperty().removeListener(sequenceViewerReadyListener);;
+		} else {
+			sequenceViewerReadyListener = c -> {
+				sequenceViewParent.getChildren().clear();
+				sequenceViewParent.getChildren().add(sequenceViewer);
+			};
+		}
 		sequenceViewer = new SequenceViewer(mainApp.getStage(), analysisHandler.getAnalysis().getPeptideId(), analysisHandler.getSelectedProteinGroupId(), sequenceViewParent.heightProperty());
 		progressBar.progressProperty().bind(sequenceViewer.progressProperty());
 		statusLabel.textProperty().bind(sequenceViewer.statusProperty());
-		sequenceViewer.readyProperty().addListener(c -> {
-			sequenceViewParent.getChildren().add(sequenceViewer);
-		});
+		sequenceViewer.readyProperty().addListener(sequenceViewerReadyListener);
 	}
 	
 	public void sequenceViewDigest() {
