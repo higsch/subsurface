@@ -14,6 +14,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -29,6 +30,8 @@ public class AaProfileViewController {
 	ChoiceBox<String> choiceAminoAcid;
 	@FXML
 	Button buttonCorrelation;
+	@FXML
+	TextField numberOfClusters;
 	
 	@FXML
 	LineChart<String, Double> chart;
@@ -36,6 +39,13 @@ public class AaProfileViewController {
 	CategoryAxis xAxis;
 	@FXML
 	NumberAxis yAxis;
+	@FXML
+	LineChart<String, Double> chartNormalized;
+	@FXML
+	CategoryAxis xAxisNormalized;
+	@FXML
+	NumberAxis yAxisNormalized;
+	
 	
 	@FXML
 	VBox vBoxContent;
@@ -58,10 +68,10 @@ public class AaProfileViewController {
 		choiceAminoAcid.getSelectionModel().selectedItemProperty().addListener((obs, o, n) -> {
 			if (n == "All") {
 				buttonCorrelation.setDisable(true);
-				updateChart(null);
+				updateCharts(null);
 			} else {
 				buttonCorrelation.setDisable(false);
-				updateChart(getAaListFromString(n));
+				updateCharts(getAaListFromString(n));
 			}
 		});
 	}
@@ -74,7 +84,7 @@ public class AaProfileViewController {
 		this.aaProfiler = aaProfiler;
 		
 		choiceAminoAcid.getSelectionModel().select("K");
-		updateChart(getAaListFromString("K"));
+		updateCharts(getAaListFromString("K"));
 		
 		labelProteinId.setText(aaProfiler.getProteinIds());
 	}
@@ -87,16 +97,23 @@ public class AaProfileViewController {
 		}
 	}
 	
-	private void updateChart(List<Character> residues) {
+	public void cluster() {
+		
+	}
+	
+	private void updateCharts(List<Character> residues) {
 		yAxis.setForceZeroInRange(false);
+		yAxisNormalized.setForceZeroInRange(false);
 		if (residues == null) {
 			chart.setData(aaProfiler.getAllXYChartSeries());
+			chartNormalized.setData(aaProfiler.getAllNormalizedXYChartSeries());
 			if (webViewPearsonAdded) {
 				vBoxContent.getChildren().remove(webViewPearson);
 				webViewPearsonAdded = false;
 			}
 		} else {
 			chart.setData(aaProfiler.getAllXYChartSeriesByResidue(residues));
+			chartNormalized.setData(aaProfiler.getAllNormalizedXYChartSeriesByResidue(residues));
 			if (webViewPearsonAdded) {
 				computeCorrelationMatrix();
 			}

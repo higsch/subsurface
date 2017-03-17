@@ -216,4 +216,40 @@ public final class Toolbox {
 		output.replace(output.length() - 3, output.length() - 1, "");
 		System.out.println(output.toString());
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T extends Number & Comparable<T>> T getMinFromMapValues(Map<?, T> map) {
+		T min = null;
+		if (map.values().toArray()[0] instanceof Number) {
+			min = (T) map.values().toArray()[0];
+			for (Entry<?, T> entry : map.entrySet()) {
+				if (entry.getValue() != null) {
+					if (entry.getValue().compareTo(min) > 0) {
+						min = entry.getValue();
+					}
+				}
+			}
+		}
+		return min;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T extends Number & Comparable<T>> T getMaxFromMapValues(Map<?, T> map) {
+		T max = null;
+		if (map.values().toArray()[0] instanceof Number) {
+			max = (T) map.values().toArray()[0];
+			for (Entry<?, T> entry : map.entrySet()) {
+				if (entry.getValue() != null) {
+					if (entry.getValue().compareTo(max) < 0) {
+						max = entry.getValue();
+					}
+				}
+			}
+		}
+		return max;
+	}
+	
+	public static double normalize(Number value, Number min, Number max) {
+		return (value.longValue() - min.longValue())/(max.longValue() - min.longValue());
+	}
 }

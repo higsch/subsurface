@@ -51,14 +51,25 @@ public class AaProfiler {
 		return profileMap.get(position);
 	}
 	
-	public XYChart.Series<String, Double> getXYChartSeriesByPosition(int position) {
+	private XYChart.Series<String, Double> getXYChartSeriesByPosition(int position, boolean normalize) {
 		XYChart.Series<String, Double> series = new XYChart.Series<>();
+		long min = 1;
+		long max = 1;
 		
-
 		if (profileMap.containsKey(position)) {
+			// Calculate min/max in case of normalization
+			if (normalize) {
+				min = Toolbox.getMinFromMapValues(profileMap.get(position));
+				max = Toolbox.getMaxFromMapValues(profileMap.get(position));
+			}
 			for (Entry<String, Long> entry : profileMap.get(position).entrySet()) {
 				if (entry.getValue() != null) {
-					XYChart.Data<String, Double> dataPoint = new XYChart.Data<String, Double>(entry.getKey(), Double.valueOf(Toolbox.log(entry.getValue(), 2)));
+					XYChart.Data<String, Double> dataPoint;
+					if (normalize) {
+						dataPoint = new XYChart.Data<String, Double>(entry.getKey(), Toolbox.normalize(entry.getValue(), min, max), 2);
+					} else {
+						dataPoint = new XYChart.Data<String, Double>(entry.getKey(), Double.valueOf(Toolbox.log(entry.getValue(), 2)));
+					}
 					Label label = new Label(String.valueOf(position));
 					label.toBack();
 					dataPoint.setNode(label);
@@ -74,7 +85,17 @@ public class AaProfiler {
 		List<XYChart.Series<String, Double>> seriesList = new ArrayList<>();
 		
 		for (Entry<Integer, Map<String, Long>> entry : profileMap.entrySet()) {
-			seriesList.add(getXYChartSeriesByPosition(entry.getKey()));
+			seriesList.add(getXYChartSeriesByPosition(entry.getKey(), false));
+		}
+		
+		return FXCollections.observableArrayList(seriesList);
+	}
+	
+	public ObservableList<XYChart.Series<String, Double>> getAllNormalizedXYChartSeries() {
+		List<XYChart.Series<String, Double>> seriesList = new ArrayList<>();
+		
+		for (Entry<Integer, Map<String, Long>> entry : profileMap.entrySet()) {
+			seriesList.add(getXYChartSeriesByPosition(entry.getKey(), true));
 		}
 		
 		return FXCollections.observableArrayList(seriesList);
@@ -85,7 +106,19 @@ public class AaProfiler {
 		
 		for (Entry<Integer, Map<String, Long>> entry : profileMap.entrySet()) {
 			if (residues.contains(protein.getSequenceAsString().charAt(entry.getKey() - 1))) {
-				seriesList.add(getXYChartSeriesByPosition(entry.getKey()));
+				seriesList.add(getXYChartSeriesByPosition(entry.getKey(), false));
+			}
+		}
+		
+		return FXCollections.observableArrayList(seriesList);
+	}
+	
+	public ObservableList<XYChart.Series<String, Double>> getAllNormalizedXYChartSeriesByResidue(List<Character> residues) {
+		List<XYChart.Series<String, Double>> seriesList = new ArrayList<>();
+		
+		for (Entry<Integer, Map<String, Long>> entry : profileMap.entrySet()) {
+			if (residues.contains(protein.getSequenceAsString().charAt(entry.getKey() - 1))) {
+				seriesList.add(getXYChartSeriesByPosition(entry.getKey(), true));
 			}
 		}
 		
@@ -131,12 +164,8 @@ public class AaProfiler {
 					sum += coeff;
 				}
 			}
-			int nonZeroValues = Toolbox.getNumberOfNonNaNValues(profile.getValue());
-			if (nonZeroValues > 0) {
-				correlationMap.get(String.valueOf(profile.getKey())).put("Sum", sum/nonZeroValues);
-			} else {
-				correlationMap.get(String.valueOf(profile.getKey())).put("Sum", 0.0);
-			}
+			
+			correlationMap.get(String.valueOf(profile.getKey())).put("Sum", sum);
 		}
 		
 		return correlationMap;

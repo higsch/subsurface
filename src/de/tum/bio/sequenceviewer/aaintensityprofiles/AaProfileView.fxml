@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -23,6 +24,14 @@
               </xAxis>
               <yAxis>
                 <NumberAxis fx:id="yAxis" side="LEFT" />
+              </yAxis>
+            </LineChart>
+            <LineChart fx:id="chartNormalized">
+              <xAxis>
+                <CategoryAxis side="BOTTOM" fx:id="xAxisNormalized" />
+              </xAxis>
+              <yAxis>
+                <NumberAxis fx:id="yAxisNormalized" side="LEFT" />
               </yAxis>
             </LineChart>
          </children>
@@ -54,6 +63,16 @@
                <font>
                   <Font size="11.0" />
                </font>
+            </Button>
+            <TextField fx:id="numberOfClusters" prefWidth="100.0" promptText="# of clusters">
+               <HBox.margin>
+                  <Insets left="15.0" />
+               </HBox.margin>
+            </TextField>
+            <Button mnemonicParsing="false" onAction="#cluster" text="Clustering">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
             </Button>
          </children>
          <padding>
