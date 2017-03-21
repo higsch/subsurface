@@ -11,9 +11,11 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
@@ -31,9 +33,12 @@ public class AaProfileViewController {
 	@FXML
 	ChoiceBox<String> choiceAminoAcid;
 	@FXML
-	Button buttonCorrelation;
+	Spinner<Integer> spinnerOffset;
 	@FXML
 	TextField numberOfClusters;
+	
+	@FXML
+	TabPane tabPane;
 	
 	@FXML
 	LineChart<String, Double> chart;
@@ -51,10 +56,17 @@ public class AaProfileViewController {
 	
 	@FXML
 	VBox vBoxContent;
+	@FXML
+	VBox vBoxCorrelationMatrix;
+	@FXML
+	LineChart<Integer, Double> chartRankedCorrelations;
+	@FXML
+	NumberAxis xAxisRankedCorrelation;
+	@FXML
+	NumberAxis yAxisRankedCorrelation;
 	
 	
 	private WebView webViewPearson = new WebView();
-	private boolean webViewPearsonAdded = false;
 	
 	public void init(Stage stage) {
 		this.stage = stage;
@@ -63,19 +75,31 @@ public class AaProfileViewController {
 		yAxis.setLabel("log2(intensity)");
 		xAxisNormalized.setLabel("Experiment");
 		yAxisNormalized.setLabel("Normalized log2(intensity)");
+		xAxisRankedCorrelation.setLabel("Rank");
+		yAxisRankedCorrelation.setLabel("Correlation");
 		
 		LinkedList<String> residues = new LinkedList<>(Arrays.asList(Toolbox.aminoAcidsSingleLetter()));
 		residues.addFirst("All");
 		
 		choiceAminoAcid.setItems(FXCollections.observableArrayList(residues));
 		choiceAminoAcid.getSelectionModel().select(0);
+		
+		spinnerOffset.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-1, 1));
+		spinnerOffset.getValueFactory().setValue(0);
+		
 		choiceAminoAcid.getSelectionModel().selectedItemProperty().addListener((obs, o, n) -> {
 			if (n == "All") {
-				buttonCorrelation.setDisable(true);
-				updateCharts(null);
+				update(null, 0);
 			} else {
-				buttonCorrelation.setDisable(false);
-				updateCharts(getAaListFromString(n));
+				update(getAaListFromString(n), spinnerOffset.getValue());
+			}
+		});
+		
+		spinnerOffset.valueProperty().addListener((obs, o, n) -> {
+			if (choiceAminoAcid.getSelectionModel().getSelectedItem() == "All") {
+				update(null, 0);
+			} else {
+				update(getAaListFromString(choiceAminoAcid.getSelectionModel().getSelectedItem()), n);
 			}
 		});
 	}
@@ -88,40 +112,39 @@ public class AaProfileViewController {
 		this.aaProfiler = aaProfiler;
 		
 		choiceAminoAcid.getSelectionModel().select("K");
-		updateCharts(getAaListFromString("K"));
+		update(getAaListFromString("K"), spinnerOffset.getValue());
 		
 		labelProteinId.setText(aaProfiler.getProteinIds());
 	}
 	
-	public void computeCorrelationMatrix() {
-		webViewPearson.getEngine().loadContent(aaProfiler.getCorrelationMatrixAsHTML(getAaListFromString(choiceAminoAcid.getSelectionModel().getSelectedItem()), false), "text/html");
-		if (!webViewPearsonAdded) {
-			vBoxContent.getChildren().add(webViewPearson);
-			webViewPearsonAdded = true;
-		}
+	private void showCorrelationMatrix() {
+		vBoxCorrelationMatrix.getChildren().clear();
+		webViewPearson.getEngine().loadContent(aaProfiler.getCorrelationMatrixAsHTML(getAaListFromString(choiceAminoAcid.getSelectionModel().getSelectedItem()), spinnerOffset.getValue(), false), "text/html");
+		vBoxCorrelationMatrix.getChildren().add(webViewPearson);
 	}
 	
 	public void cluster() {
 		
 	}
 	
-	private void updateCharts(List<Character> residues) {
+	private void update(List<Character> residues, int offset) {
 		yAxis.setForceZeroInRange(false);
 		yAxisNormalized.setForceZeroInRange(false);
 		if (residues == null) {
 			chart.setData(aaProfiler.getAllXYChartSeries());
 			chartNormalized.setData(aaProfiler.getAllNormalizedXYChartSeries());
-			if (webViewPearsonAdded) {
-				vBoxContent.getChildren().remove(webViewPearson);
-				webViewPearsonAdded = false;
-			}
+			vBoxCorrelationMatrix.getChildren().clear();
+			chartRankedCorrelations.getData().clear();
 		} else {
-			chart.setData(aaProfiler.getAllXYChartSeriesByResidue(residues));
-			chartNormalized.setData(aaProfiler.getAllNormalizedXYChartSeriesByResidue(residues));
-			if (webViewPearsonAdded) {
-				computeCorrelationMatrix();
-			}
+			chart.setData(aaProfiler.getAllXYChartSeriesByResidue(residues, offset));
+			chartNormalized.setData(aaProfiler.getAllNormalizedXYChartSeriesByResidue(residues, offset));
+			showCorrelationMatrix();
+			showRankedCorrelations();
 		}
+	}
+	
+	private void showRankedCorrelations() {
+		chartRankedCorrelations.setData(aaProfiler.getAllRankedCorrelationSeriesByResidue(getAaListFromString(choiceAminoAcid.getSelectionModel().getSelectedItem()), spinnerOffset.getValue()));
 	}
 	
 	private List<Character> getAaListFromString(String string) {

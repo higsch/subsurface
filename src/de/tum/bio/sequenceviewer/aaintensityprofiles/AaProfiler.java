@@ -1,6 +1,7 @@
 package de.tum.bio.sequenceviewer.aaintensityprofiles;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +14,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 
 public class AaProfiler {
+	
+	private final String SUM_TITLE = "Sum";
 	
 	private ProteinGroup protein;
 	private Map<Integer, Map<String, Long>> profileMap;
@@ -62,6 +66,7 @@ public class AaProfiler {
 				min = Toolbox.getMinFromMapValues(profileMap.get(position));
 				max = Toolbox.getMaxFromMapValues(profileMap.get(position));
 			}
+			
 			for (Entry<String, Long> entry : profileMap.get(position).entrySet()) {
 				if (entry.getValue() != null) {
 					XYChart.Data<String, Double> dataPoint = null;
@@ -72,15 +77,17 @@ public class AaProfiler {
 					}
 					
 					if (dataPoint != null) {
-						Label label = new Label(String.valueOf(position));
-						label.toBack();
+						Label label = new Label("");
+						label.setPrefSize(12.0, 12.0);
+						Tooltip.install(label, new Tooltip(String.valueOf(position)));
 						dataPoint.setNode(label);
 						series.getData().add(dataPoint);
 					}
 				}
 			}
+			series.setName(String.valueOf(position));
 		}
-		
+
 		return series;
 	}
 	
@@ -104,57 +111,63 @@ public class AaProfiler {
 		return FXCollections.observableArrayList(seriesList);
 	}
 	
-	public ObservableList<XYChart.Series<String, Double>> getAllXYChartSeriesByResidue(List<Character> residues) {
+	public ObservableList<XYChart.Series<String, Double>> getAllXYChartSeriesByResidue(List<Character> residues, int offset) {
 		List<XYChart.Series<String, Double>> seriesList = new ArrayList<>();
 		
 		for (Entry<Integer, Map<String, Long>> entry : profileMap.entrySet()) {
-			if (residues.contains(protein.getSequenceAsString().charAt(entry.getKey() - 1))) {
-				seriesList.add(getXYChartSeriesByPosition(entry.getKey(), false));
+			if (((entry.getKey() - 1 + offset) >= 0) && ((entry.getKey() - 1 + offset) < protein.getSequenceAsString().length())) {
+				if (residues.contains(protein.getSequenceAsString().charAt(entry.getKey() - 1))) {
+					seriesList.add(getXYChartSeriesByPosition(entry.getKey() + offset, false));
+				}
 			}
 		}
 		
 		return FXCollections.observableArrayList(seriesList);
 	}
 	
-	public ObservableList<XYChart.Series<String, Double>> getAllNormalizedXYChartSeriesByResidue(List<Character> residues) {
+	public ObservableList<XYChart.Series<String, Double>> getAllNormalizedXYChartSeriesByResidue(List<Character> residues, int offset) {
 		List<XYChart.Series<String, Double>> seriesList = new ArrayList<>();
 		
 		for (Entry<Integer, Map<String, Long>> entry : profileMap.entrySet()) {
-			if (residues.contains(protein.getSequenceAsString().charAt(entry.getKey() - 1))) {
-				seriesList.add(getXYChartSeriesByPosition(entry.getKey(), true));
+			if ((entry.getKey() - 1 + offset) >= 0 && ((entry.getKey() - 1 + offset) < protein.getSequenceAsString().length())) {
+				if (residues.contains(protein.getSequenceAsString().charAt(entry.getKey() - 1))) {
+					seriesList.add(getXYChartSeriesByPosition(entry.getKey() + offset, true));
+				}
 			}
 		}
 		
 		return FXCollections.observableArrayList(seriesList);
 	}
 	
-	public Map<String, Map<String, Double>> getCorrelationMatrix(List<Character> residues, boolean normalize) {
+	public Map<String, Map<String, Double>> getCorrelationMatrix(List<Character> residues, int offset, boolean normalize) {
 		Map<Integer, List<Double>> profiles = new HashMap<>();
 		
 		// Create map with double profile values
 		for (Entry<Integer, Map<String, Long>> entry : profileMap.entrySet()) {
-			if (residues.contains(protein.getSequenceAsString().charAt(entry.getKey() - 1))) {
-				for (Entry<String, Long> dataPoint : entry.getValue().entrySet()) {
-					if (!profiles.containsKey(entry.getKey())) {
-						profiles.put(entry.getKey(), new ArrayList<Double>());
+			if (((entry.getKey() - 1 + offset) >= 0) && (protein.getSequenceAsString().length() > (entry.getKey() - 1 + offset))) {
+				if (residues.contains(protein.getSequenceAsString().charAt(entry.getKey() - 1))) {
+					for (Entry<String, Long> dataPoint : profileMap.get(entry.getKey() + offset).entrySet()) {
+						if (!profiles.containsKey(entry.getKey())) {
+							profiles.put(entry.getKey(), new ArrayList<Double>());
+						}
+						double intensity;
+						if (dataPoint.getValue() == null) {
+							intensity = 0d; //Double.NaN;
+						} else {
+							intensity = (double) dataPoint.getValue();
+						}
+						profiles.get(entry.getKey()).add(intensity);
 					}
-					double intensity;
-					if (dataPoint.getValue() == null) {
-						intensity = 0d; //Double.NaN;
-					} else {
-						intensity = (double) dataPoint.getValue();
+					if (normalize) {
+						List<Double> normalizedIntensities = new ArrayList<>();
+						double min = Toolbox.getMinFromListValues(profiles.get(entry.getKey()));
+						double max = Toolbox.getMaxFromListValues(profiles.get(entry.getKey()));
+						for (double value : profiles.get(entry.getKey())) {
+							normalizedIntensities.add(Toolbox.normalize(value, min, max));
+						}
+						profiles.replace(entry.getKey(), normalizedIntensities);
+						
 					}
-					profiles.get(entry.getKey()).add(intensity);
-				}
-				if (normalize) {
-					List<Double> normalizedIntensities = new ArrayList<>();
-					double min = Toolbox.getMinFromListValues(profiles.get(entry.getKey()));
-					double max = Toolbox.getMaxFromListValues(profiles.get(entry.getKey()));
-					for (double value : profiles.get(entry.getKey())) {
-						normalizedIntensities.add(Toolbox.normalize(value, min, max));
-					}
-					profiles.replace(entry.getKey(), normalizedIntensities);
-					
 				}
 			}
 		}
@@ -171,21 +184,21 @@ public class AaProfiler {
 			
 			double sum = 0d;
 			for (Entry<Integer, List<Double>> compProfile : profiles.entrySet()) {
-				Double coeff = cor.correlateOverlap(convertToDoubleArray(profile.getValue().toArray()), convertToDoubleArray(compProfile.getValue().toArray()));
+				Double coeff = cor.correlateOverlap(Toolbox.convertToDoubleArray(profile.getValue().toArray()), Toolbox.convertToDoubleArray(compProfile.getValue().toArray()));
 				correlationMap.get(String.valueOf(profile.getKey())).put(String.valueOf(compProfile.getKey()), (double) coeff);
-				if (!coeff.isNaN() && coeff.doubleValue() != 1.0) {
+				if (!coeff.isNaN()) {
 					sum += coeff;
 				}
 			}
 			
-			correlationMap.get(String.valueOf(profile.getKey())).put("Sum", sum);
+			correlationMap.get(String.valueOf(profile.getKey())).put(SUM_TITLE, sum);
 		}
 		
 		return correlationMap;
 	}
 	
-	public String getCorrelationMatrixAsHTML(List<Character> residues, boolean normalize) {
-		Map<String, Map<String, Double>> correlationMap = getCorrelationMatrix(residues, normalize);
+	public String getCorrelationMatrixAsHTML(List<Character> residues, int offset, boolean normalize) {
+		Map<String, Map<String, Double>> correlationMap = getCorrelationMatrix(residues, offset, normalize);
 		StringBuilder builder = new StringBuilder();
 		
 		builder.append("<html><head></head><body><table>");
@@ -219,13 +232,36 @@ public class AaProfiler {
 		return builder.toString();
 	}
 	
-	private double[] convertToDoubleArray(Object[] objectArray) {
-		double[] doubleArray = new double[objectArray.length];
-		
-		for (int i = 0; i < objectArray.length; i++) {
-			doubleArray[i] = (double) objectArray[i];
+	public ObservableList<XYChart.Series<Integer, Double>> getAllRankedCorrelationSeriesByResidue(List<Character> residues, int offset) {
+		List<XYChart.Series<Integer, Double>> seriesList = new ArrayList<>();
+		Map<String, Map<String, Double>> correlationMap = getCorrelationMatrix(residues, offset, false);
+		for (Entry<String, Map<String, Double>> entry : correlationMap.entrySet()) {
+			XYChart.Series<Integer, Double> series = new XYChart.Series<>();
+			List<Double> correlations = new ArrayList<>();
+			for (Entry<String, Double> subEntry : entry.getValue().entrySet()) {
+				if (!subEntry.getKey().contains(SUM_TITLE)) {
+					if (subEntry.getValue().isNaN()) {
+						correlations.add(0d);
+					} else {
+						correlations.add(subEntry.getValue());
+					}
+				}
+			}
+			Collections.sort(correlations);
+			for (int i = 0; i < correlations.size(); i++) {
+				XYChart.Data<Integer, Double> dataPoint = new XYChart.Data<>();
+				dataPoint.setXValue(i);
+				dataPoint.setYValue(correlations.get(i));
+				Label label = new Label("");
+				label.setPrefSize(12.0, 12.0);
+				Tooltip.install(label, new Tooltip(entry.getKey()));
+				dataPoint.setNode(label);
+				series.getData().add(dataPoint);
+			}
+			series.setName(entry.getKey());
+			seriesList.add(series);
 		}
 		
-		return doubleArray;
+		return FXCollections.observableArrayList(seriesList);
 	}
 }

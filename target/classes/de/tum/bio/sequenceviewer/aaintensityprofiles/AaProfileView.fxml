@@ -7,8 +7,10 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -16,26 +18,55 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.tum.bio.sequenceviewer.aaintensityprofiles.AaProfileViewController">
    <center>
-      <VBox fx:id="vBoxContent" BorderPane.alignment="CENTER">
-         <children>
-            <LineChart fx:id="chart" animated="false" legendVisible="false" minHeight="300.0">
-              <xAxis>
-                <CategoryAxis side="BOTTOM" fx:id="xAxis" />
-              </xAxis>
-              <yAxis>
-                <NumberAxis fx:id="yAxis" side="LEFT" />
-              </yAxis>
-            </LineChart>
-            <LineChart fx:id="chartNormalized" animated="false" legendVisible="false" minHeight="300.0">
-              <xAxis>
-                <CategoryAxis side="BOTTOM" fx:id="xAxisNormalized" />
-              </xAxis>
-              <yAxis>
-                <NumberAxis fx:id="yAxisNormalized" side="LEFT" />
-              </yAxis>
-            </LineChart>
-         </children>
-      </VBox>
+      <TabPane fx:id="tabPane" BorderPane.alignment="CENTER">
+         <tabs>
+            <Tab closable="false" text="Profiles">
+               <content>
+                  <VBox fx:id="vBoxContent">
+                     <children>
+                        <LineChart fx:id="chart" animated="false" minHeight="300.0">
+                          <xAxis>
+                            <CategoryAxis side="BOTTOM" fx:id="xAxis" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis fx:id="yAxis" side="LEFT" />
+                          </yAxis>
+                        </LineChart>
+                        <LineChart fx:id="chartNormalized" animated="false" minHeight="300.0">
+                          <xAxis>
+                            <CategoryAxis side="BOTTOM" fx:id="xAxisNormalized" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis fx:id="yAxisNormalized" side="LEFT" />
+                          </yAxis>
+                        </LineChart>
+                     </children>
+                  </VBox>
+               </content>
+            </Tab>
+            <Tab closable="false" text="Correlation matrix">
+               <content>
+                  <VBox fx:id="vBoxCorrelationMatrix" prefHeight="200.0" prefWidth="100.0" />
+               </content>
+            </Tab>
+            <Tab closable="false" text="Ranked correlations">
+               <content>
+                  <VBox>
+                     <children>
+                        <LineChart fx:id="chartRankedCorrelations" animated="false">
+                          <xAxis>
+                            <NumberAxis side="BOTTOM" fx:id="xAxisRankedCorrelation" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis fx:id="yAxisRankedCorrelation" side="LEFT" />
+                          </yAxis>
+                        </LineChart>
+                     </children>
+                  </VBox>
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
    </center>
    <top>
       <HBox alignment="CENTER_LEFT" styleClass="aaIntensityProfiles_toolbar" BorderPane.alignment="CENTER">
@@ -51,25 +82,24 @@
             <Label alignment="CENTER" text="Amino acid:" />
             <ChoiceBox fx:id="choiceAminoAcid" prefWidth="60.0">
                <HBox.margin>
-                  <Insets left="7.0" />
+                  <Insets left="5.0" />
                </HBox.margin></ChoiceBox>
-            <Button fx:id="buttonCorrelation" mnemonicParsing="false" onAction="#computeCorrelationMatrix" prefHeight="27.0" prefWidth="40.0" text="%fa.server">
-               <tooltip>
-                  <Tooltip text="Compute correlation matrix" />
-               </tooltip>
+            <Label alignment="CENTER" text="Offset:">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin>
-               <font>
-                  <Font size="11.0" />
-               </font>
-            </Button>
-            <TextField fx:id="numberOfClusters" prefWidth="100.0" promptText="# of clusters">
+            </Label>
+            <Spinner fx:id="spinnerOffset" prefWidth="70.0">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </Spinner>
+            <TextField fx:id="numberOfClusters" prefWidth="100.0" promptText="# of clusters" visible="false">
                <HBox.margin>
                   <Insets left="15.0" />
                </HBox.margin>
             </TextField>
-            <Button mnemonicParsing="false" onAction="#cluster" text="Clustering">
+            <Button mnemonicParsing="false" onAction="#cluster" text="Clustering" visible="false">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin>

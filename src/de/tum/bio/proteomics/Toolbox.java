@@ -315,4 +315,14 @@ public final class Toolbox {
 			return ((double) ((value.longValue() - min.longValue()))/((double) (max.longValue() - min.longValue())));
 		}
 	}
+	
+	public static double[] convertToDoubleArray(Object[] objectArray) {
+		double[] doubleArray = new double[objectArray.length];
+		
+		for (int i = 0; i < objectArray.length; i++) {
+			doubleArray[i] = (double) objectArray[i];
+		}
+		
+		return doubleArray;
+	}
 }
