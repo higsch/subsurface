@@ -136,11 +136,11 @@ public final class Toolbox {
 		}
 	}
 	
-	public static double log(long x, int base) {
-		if (x == 0) {
+	public static double log(Number x, int base) {
+		if (x.doubleValue() == 0) {
 			return Double.NaN;
 		} else {
-			return Math.log(x) / Math.log(base);
+			return Math.log(x.doubleValue()) / Math.log(base);
 		}
 	}
 	
@@ -217,32 +217,88 @@ public final class Toolbox {
 		System.out.println(output.toString());
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static <T extends Number & Comparable<T>> T getMinFromMapValues(Map<?, T> map) {
-		T min = null;
-		if (map.values().toArray()[0] instanceof Number) {
-			min = (T) map.values().toArray()[0];
-			for (Entry<?, T> entry : map.entrySet()) {
-				if (entry.getValue() != null) {
-					if (entry.getValue().compareTo(min) > 0) {
-						min = entry.getValue();
-					}
+	public static <T extends Number & Comparable<T>> long getMinFromMapValues(Map<?, T> map) {
+		// select start value
+		long min = 0;
+		for (Entry<?, T> entry : map.entrySet()) {
+			if (entry.getValue() != null) {
+				min = (long) entry.getValue();
+				break;
+			}
+		}
+		if (min == 0) {
+			return 0;
+		}
+		for (Entry<?, T> entry : map.entrySet()) {
+			if (entry.getValue() != null) {
+				if ((long) entry.getValue() < min) {
+					min = (long) entry.getValue();
 				}
 			}
 		}
 		return min;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static <T extends Number & Comparable<T>> T getMaxFromMapValues(Map<?, T> map) {
-		T max = null;
-		if (map.values().toArray()[0] instanceof Number) {
-			max = (T) map.values().toArray()[0];
-			for (Entry<?, T> entry : map.entrySet()) {
-				if (entry.getValue() != null) {
-					if (entry.getValue().compareTo(max) < 0) {
-						max = entry.getValue();
-					}
+	public static <T extends Number & Comparable<T>> double getMinFromListValues(List<T> list) {
+		// select start value
+		double min = 0d;
+		for (T entry : list) {
+			if (entry != null) {
+				min = (double) entry;
+				break;
+			}
+		}
+		if (min == 0) {
+			return 0d;
+		}
+		for (T entry : list) {
+			if (entry != null) {
+				if ((double) entry < min) {
+					min = (double) entry;
+				}
+			}
+		}
+		return min;
+	}
+	
+	public static <T extends Number & Comparable<T>> long getMaxFromMapValues(Map<?, T> map) {
+		// select star value
+		long max = 0;
+		for (Entry<?, T> entry : map.entrySet()) {
+			if (entry.getValue() != null) {
+				max = (long) entry.getValue();
+				break;
+			}
+		}
+		if (max == 0) {
+			return 0;
+		}
+		for (Entry<?, T> entry : map.entrySet()) {
+			if (entry.getValue() != null) {
+				if ((long) entry.getValue() > (long) max) {
+					max = (long) entry.getValue();
+				}
+			}
+		}
+		return max;
+	}
+	
+	public static <T extends Number & Comparable<T>> double getMaxFromListValues(List<T> list) {
+		// select star value
+		double max = 0d;
+		for (T entry : list) {
+			if (entry != null) {
+				max = (double) entry;
+				break;
+			}
+		}
+		if (max == 0) {
+			return 0d;
+		}
+		for (T entry : list) {
+			if (entry != null) {
+				if ((double) entry > (double) max) {
+					max = (double) entry;
 				}
 			}
 		}
@@ -250,6 +306,13 @@ public final class Toolbox {
 	}
 	
 	public static double normalize(Number value, Number min, Number max) {
-		return (value.longValue() - min.longValue())/(max.longValue() - min.longValue());
+		if (value == null) {
+			return 0d;
+		}
+		if (max.longValue() - min.longValue() == 0) {
+			return 0d;
+		} else {
+			return ((double) ((value.longValue() - min.longValue()))/((double) (max.longValue() - min.longValue())));
+		}
 	}
 }

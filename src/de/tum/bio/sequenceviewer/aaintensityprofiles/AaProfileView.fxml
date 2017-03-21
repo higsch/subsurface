@@ -18,7 +18,7 @@
    <center>
       <VBox fx:id="vBoxContent" BorderPane.alignment="CENTER">
          <children>
-            <LineChart fx:id="chart" legendVisible="false" minHeight="400.0">
+            <LineChart fx:id="chart" animated="false" legendVisible="false" minHeight="300.0">
               <xAxis>
                 <CategoryAxis side="BOTTOM" fx:id="xAxis" />
               </xAxis>
@@ -26,7 +26,7 @@
                 <NumberAxis fx:id="yAxis" side="LEFT" />
               </yAxis>
             </LineChart>
-            <LineChart fx:id="chartNormalized">
+            <LineChart fx:id="chartNormalized" animated="false" legendVisible="false" minHeight="300.0">
               <xAxis>
                 <CategoryAxis side="BOTTOM" fx:id="xAxisNormalized" />
               </xAxis>
@@ -81,6 +81,6 @@
       </HBox>
    </top>
    <bottom>
-      <HBox prefHeight="20.0" styleClass="bottom" BorderPane.alignment="CENTER" />
+      <HBox minHeight="20.0" prefHeight="20.0" styleClass="bottom" BorderPane.alignment="CENTER" />
    </bottom>
 </BorderPane>

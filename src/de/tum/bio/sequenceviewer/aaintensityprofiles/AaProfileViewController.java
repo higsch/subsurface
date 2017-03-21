@@ -24,6 +24,8 @@ public class AaProfileViewController {
 	private Stage stage;
 	private AaProfiler aaProfiler;
 	
+	final double SCALE_DELTA = 1.1;
+	
 	@FXML
 	Label labelProteinId;
 	@FXML
@@ -51,14 +53,16 @@ public class AaProfileViewController {
 	VBox vBoxContent;
 	
 	
-	WebView webViewPearson = new WebView();
-	boolean webViewPearsonAdded = false;
+	private WebView webViewPearson = new WebView();
+	private boolean webViewPearsonAdded = false;
 	
 	public void init(Stage stage) {
 		this.stage = stage;
 		
 		xAxis.setLabel("Experiment");
 		yAxis.setLabel("log2(intensity)");
+		xAxisNormalized.setLabel("Experiment");
+		yAxisNormalized.setLabel("Normalized log2(intensity)");
 		
 		LinkedList<String> residues = new LinkedList<>(Arrays.asList(Toolbox.aminoAcidsSingleLetter()));
 		residues.addFirst("All");
@@ -90,7 +94,7 @@ public class AaProfileViewController {
 	}
 	
 	public void computeCorrelationMatrix() {
-		webViewPearson.getEngine().loadContent(aaProfiler.getCorrelationMatrixAsHTML(getAaListFromString(choiceAminoAcid.getSelectionModel().getSelectedItem())), "text/html");
+		webViewPearson.getEngine().loadContent(aaProfiler.getCorrelationMatrixAsHTML(getAaListFromString(choiceAminoAcid.getSelectionModel().getSelectedItem()), false), "text/html");
 		if (!webViewPearsonAdded) {
 			vBoxContent.getChildren().add(webViewPearson);
 			webViewPearsonAdded = true;

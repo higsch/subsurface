@@ -52,6 +52,9 @@ public class AaProfileGenerator extends Stage {
 	private void showWindow(AaProfiler aaProfileContainer) {
 		try {
 			Font.loadFont(Main.class.getResourceAsStream("/font/fontawesome-webfont.ttf"), 10);
+			
+			setTitle("Profile view of " + aaProfileContainer.getProteinIds());
+			
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("AaProfileView.fxml"));
 			loader.setResources(ResourceBundle.getBundle("fontawesome"));
 			BorderPane root = (BorderPane) loader.load();
@@ -59,7 +62,7 @@ public class AaProfileGenerator extends Stage {
 			controller.init(this);
 			controller.setAaProfiler(aaProfileContainer);
 			
-			Scene scene = new Scene(root, 1000, 600);
+			Scene scene = new Scene(root, 1000, 800);
 			scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
 			setScene(scene);
 			

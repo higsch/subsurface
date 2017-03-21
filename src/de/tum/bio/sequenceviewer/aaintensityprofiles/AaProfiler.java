@@ -53,8 +53,8 @@ public class AaProfiler {
 	
 	private XYChart.Series<String, Double> getXYChartSeriesByPosition(int position, boolean normalize) {
 		XYChart.Series<String, Double> series = new XYChart.Series<>();
-		long min = 1;
-		long max = 1;
+		long min = 0;
+		long max = 0;
 		
 		if (profileMap.containsKey(position)) {
 			// Calculate min/max in case of normalization
@@ -64,16 +64,19 @@ public class AaProfiler {
 			}
 			for (Entry<String, Long> entry : profileMap.get(position).entrySet()) {
 				if (entry.getValue() != null) {
-					XYChart.Data<String, Double> dataPoint;
+					XYChart.Data<String, Double> dataPoint = null;
 					if (normalize) {
-						dataPoint = new XYChart.Data<String, Double>(entry.getKey(), Toolbox.normalize(entry.getValue(), min, max), 2);
+						dataPoint = new XYChart.Data<String, Double>(entry.getKey(), Toolbox.normalize(entry.getValue(), min, max));
 					} else {
 						dataPoint = new XYChart.Data<String, Double>(entry.getKey(), Double.valueOf(Toolbox.log(entry.getValue(), 2)));
 					}
-					Label label = new Label(String.valueOf(position));
-					label.toBack();
-					dataPoint.setNode(label);
-					series.getData().add(dataPoint);
+					
+					if (dataPoint != null) {
+						Label label = new Label(String.valueOf(position));
+						label.toBack();
+						dataPoint.setNode(label);
+						series.getData().add(dataPoint);
+					}
 				}
 			}
 		}
@@ -125,7 +128,7 @@ public class AaProfiler {
 		return FXCollections.observableArrayList(seriesList);
 	}
 	
-	public Map<String, Map<String, Double>> getCorrelationMatrix(List<Character> residues) {
+	public Map<String, Map<String, Double>> getCorrelationMatrix(List<Character> residues, boolean normalize) {
 		Map<Integer, List<Double>> profiles = new HashMap<>();
 		
 		// Create map with double profile values
@@ -142,6 +145,16 @@ public class AaProfiler {
 						intensity = (double) dataPoint.getValue();
 					}
 					profiles.get(entry.getKey()).add(intensity);
+				}
+				if (normalize) {
+					List<Double> normalizedIntensities = new ArrayList<>();
+					double min = Toolbox.getMinFromListValues(profiles.get(entry.getKey()));
+					double max = Toolbox.getMaxFromListValues(profiles.get(entry.getKey()));
+					for (double value : profiles.get(entry.getKey())) {
+						normalizedIntensities.add(Toolbox.normalize(value, min, max));
+					}
+					profiles.replace(entry.getKey(), normalizedIntensities);
+					
 				}
 			}
 		}
@@ -171,8 +184,8 @@ public class AaProfiler {
 		return correlationMap;
 	}
 	
-	public String getCorrelationMatrixAsHTML(List<Character> residues) {
-		Map<String, Map<String, Double>> correlationMap = getCorrelationMatrix(residues);
+	public String getCorrelationMatrixAsHTML(List<Character> residues, boolean normalize) {
+		Map<String, Map<String, Double>> correlationMap = getCorrelationMatrix(residues, normalize);
 		StringBuilder builder = new StringBuilder();
 		
 		builder.append("<html><head></head><body><table>");
