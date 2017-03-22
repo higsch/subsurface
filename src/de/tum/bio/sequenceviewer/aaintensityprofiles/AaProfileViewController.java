@@ -18,7 +18,6 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
 public class AaProfileViewController {
@@ -64,9 +63,6 @@ public class AaProfileViewController {
 	NumberAxis xAxisRankedCorrelation;
 	@FXML
 	NumberAxis yAxisRankedCorrelation;
-	
-	
-	private WebView webViewPearson = new WebView();
 	
 	public void init(Stage stage) {
 		this.stage = stage;
@@ -118,9 +114,7 @@ public class AaProfileViewController {
 	}
 	
 	private void showCorrelationMatrix() {
-		vBoxCorrelationMatrix.getChildren().clear();
-		webViewPearson.getEngine().loadContent(aaProfiler.getCorrelationMatrixAsHTML(getAaListFromString(choiceAminoAcid.getSelectionModel().getSelectedItem()), spinnerOffset.getValue(), false), "text/html");
-		vBoxCorrelationMatrix.getChildren().add(webViewPearson);
+		
 	}
 	
 	public void cluster() {
@@ -133,7 +127,6 @@ public class AaProfileViewController {
 		if (residues == null) {
 			chart.setData(aaProfiler.getAllXYChartSeries());
 			chartNormalized.setData(aaProfiler.getAllNormalizedXYChartSeries());
-			vBoxCorrelationMatrix.getChildren().clear();
 			chartRankedCorrelations.getData().clear();
 		} else {
 			chart.setData(aaProfiler.getAllXYChartSeriesByResidue(residues, offset));
