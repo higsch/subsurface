@@ -60,9 +60,9 @@ public class AaProfileGenerator extends Stage {
 			BorderPane root = (BorderPane) loader.load();
 			controller = loader.getController();
 			controller.init(this);
-			controller.setAaProfiler(aaProfiler);
 			
-			Scene scene = new Scene(root, 1000, 800);
+			
+			Scene scene = new Scene(root, 1000, 900);
 			scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
 			setScene(scene);
 			
@@ -72,8 +72,13 @@ public class AaProfileGenerator extends Stage {
 			});
 			
 			setAlwaysOnTop(true);
-			//initModality(Modality.APPLICATION_MODAL); 
-			showAndWait();
+			
+			setOnShown(event -> {
+				controller.setAaProfiler(aaProfiler);
+			});
+			
+			show();
+			
 		} catch (IOException e) {
 			Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
 			alert.showAndWait();

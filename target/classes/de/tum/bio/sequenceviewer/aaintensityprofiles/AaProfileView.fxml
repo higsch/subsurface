@@ -7,12 +7,15 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -22,26 +25,30 @@
          <tabs>
             <Tab closable="false" text="Profiles">
                <content>
-                  <VBox fx:id="vBoxContent">
-                     <children>
-                        <LineChart fx:id="chart" animated="false" minHeight="300.0">
-                          <xAxis>
-                            <CategoryAxis side="BOTTOM" fx:id="xAxis" />
-                          </xAxis>
-                          <yAxis>
-                            <NumberAxis fx:id="yAxis" side="LEFT" />
-                          </yAxis>
-                        </LineChart>
-                        <LineChart fx:id="chartNormalized" animated="false" minHeight="300.0">
-                          <xAxis>
-                            <CategoryAxis side="BOTTOM" fx:id="xAxisNormalized" />
-                          </xAxis>
-                          <yAxis>
-                            <NumberAxis fx:id="yAxisNormalized" side="LEFT" />
-                          </yAxis>
-                        </LineChart>
-                     </children>
-                  </VBox>
+                  <ScrollPane fitToWidth="true">
+                     <content>
+                        <VBox fx:id="vBoxContent">
+                           <children>
+                              <LineChart fx:id="chart" animated="false" minHeight="300.0" VBox.vgrow="ALWAYS">
+                                <xAxis>
+                                  <CategoryAxis side="BOTTOM" fx:id="xAxis" />
+                                </xAxis>
+                                <yAxis>
+                                  <NumberAxis fx:id="yAxis" side="LEFT" />
+                                </yAxis>
+                              </LineChart>
+                              <LineChart fx:id="chartNormalized" animated="false" minHeight="300.0" VBox.vgrow="ALWAYS">
+                                <xAxis>
+                                  <CategoryAxis side="BOTTOM" fx:id="xAxisNormalized" />
+                                </xAxis>
+                                <yAxis>
+                                  <NumberAxis fx:id="yAxisNormalized" side="LEFT" />
+                                </yAxis>
+                              </LineChart>
+                           </children>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
                </content>
             </Tab>
             <Tab closable="false" text="Correlation matrix">
@@ -51,18 +58,22 @@
             </Tab>
             <Tab closable="false" text="Ranked correlations">
                <content>
-                  <VBox>
-                     <children>
-                        <LineChart fx:id="chartRankedCorrelations" animated="false">
-                          <xAxis>
-                            <NumberAxis side="BOTTOM" fx:id="xAxisRankedCorrelation" />
-                          </xAxis>
-                          <yAxis>
-                            <NumberAxis fx:id="yAxisRankedCorrelation" side="LEFT" />
-                          </yAxis>
-                        </LineChart>
-                     </children>
-                  </VBox>
+                  <ScrollPane fitToWidth="true">
+                     <content>
+                        <VBox>
+                           <children>
+                              <LineChart fx:id="chartRankedCorrelations" animated="false" VBox.vgrow="ALWAYS">
+                                <xAxis>
+                                  <NumberAxis side="BOTTOM" fx:id="xAxisRankedCorrelation" />
+                                </xAxis>
+                                <yAxis>
+                                  <NumberAxis fx:id="yAxisRankedCorrelation" side="LEFT" />
+                                </yAxis>
+                              </LineChart>
+                           </children>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
                </content>
             </Tab>
          </tabs>
@@ -111,6 +122,19 @@
       </HBox>
    </top>
    <bottom>
-      <HBox minHeight="20.0" prefHeight="20.0" styleClass="bottom" BorderPane.alignment="CENTER" />
+      <HBox minHeight="26.0" prefHeight="20.0" styleClass="bottom" BorderPane.alignment="CENTER">
+         <children>
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+            <Label fx:id="statusMessage">
+               <HBox.margin>
+                  <Insets bottom="3.0" left="5.0" right="5.0" top="3.0" />
+               </HBox.margin>
+            </Label>
+            <ProgressBar fx:id="progressBar" prefWidth="100.0" progress="0.0">
+               <HBox.margin>
+                  <Insets bottom="3.0" right="5.0" top="3.0" />
+               </HBox.margin>
+            </ProgressBar>
+         </children></HBox>
    </bottom>
 </BorderPane>

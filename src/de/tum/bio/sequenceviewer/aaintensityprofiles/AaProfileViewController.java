@@ -13,6 +13,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TabPane;
@@ -64,9 +65,16 @@ public class AaProfileViewController {
 	@FXML
 	NumberAxis yAxisRankedCorrelation;
 	
+	@FXML
+	Label statusMessage;
+	@FXML
+	ProgressBar progressBar;
+	
 	public void init(Stage stage) {
 		this.stage = stage;
 		
+		statusMessage.setText("Initializing...");
+
 		xAxis.setLabel("Experiment");
 		yAxis.setLabel("log2(intensity)");
 		xAxisNormalized.setLabel("Experiment");
@@ -78,26 +86,10 @@ public class AaProfileViewController {
 		residues.addFirst("All");
 		
 		choiceAminoAcid.setItems(FXCollections.observableArrayList(residues));
-		choiceAminoAcid.getSelectionModel().select(0);
+		choiceAminoAcid.getSelectionModel().select("K");
 		
 		spinnerOffset.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-1, 1));
 		spinnerOffset.getValueFactory().setValue(0);
-		
-		choiceAminoAcid.getSelectionModel().selectedItemProperty().addListener((obs, o, n) -> {
-			if (n == "All") {
-				update(null, 0);
-			} else {
-				update(getAaListFromString(n), spinnerOffset.getValue());
-			}
-		});
-		
-		spinnerOffset.valueProperty().addListener((obs, o, n) -> {
-			if (choiceAminoAcid.getSelectionModel().getSelectedItem() == "All") {
-				update(null, 0);
-			} else {
-				update(getAaListFromString(choiceAminoAcid.getSelectionModel().getSelectedItem()), n);
-			}
-		});
 	}
 	
 	public Stage getStage() {
@@ -107,14 +99,34 @@ public class AaProfileViewController {
 	public void setAaProfiler(AaProfiler aaProfiler) {
 		this.aaProfiler = aaProfiler;
 		
-		choiceAminoAcid.getSelectionModel().select("K");
-		update(getAaListFromString("K"), spinnerOffset.getValue());
-		
 		labelProteinId.setText(aaProfiler.getProteinIds());
-	}
-	
-	private void showCorrelationMatrix() {
+		statusMessage.textProperty().bind(aaProfiler.statusProperty());
+		progressBar.progressProperty().bind(aaProfiler.progressProperty());
 		
+		aaProfiler.init();
+		
+		aaProfiler.readyProperty().addListener(event -> {
+			choiceAminoAcid.getSelectionModel().selectedItemProperty().addListener((obs, o, n) -> {
+				if (n == "All") {
+					update(null, 0);
+				} else {
+					update(getAaListFromString(n), spinnerOffset.getValue());
+				}
+			});
+			
+			spinnerOffset.valueProperty().addListener((obs, o, n) -> {
+				if (choiceAminoAcid.getSelectionModel().getSelectedItem() == "All") {
+					update(null, 0);
+				} else {
+					update(getAaListFromString(choiceAminoAcid.getSelectionModel().getSelectedItem()), n);
+				}
+			});
+			
+			update(getAaListFromString("K"), spinnerOffset.getValue());
+			chart.setData(aaProfiler.getSeries());
+			chartNormalized.setData(aaProfiler.getNormalizedSeries());
+			chartRankedCorrelations.setData(aaProfiler.getCorrelations());
+		});
 	}
 	
 	public void cluster() {
@@ -125,19 +137,18 @@ public class AaProfileViewController {
 		yAxis.setForceZeroInRange(false);
 		yAxisNormalized.setForceZeroInRange(false);
 		if (residues == null) {
-			chart.setData(aaProfiler.getAllXYChartSeries());
-			chartNormalized.setData(aaProfiler.getAllNormalizedXYChartSeries());
-			chartRankedCorrelations.getData().clear();
+			aaProfiler.getAllXYChartSeries();
+			aaProfiler.getAllNormalizedXYChartSeries();
+			showRankedCorrelations();
 		} else {
-			chart.setData(aaProfiler.getAllXYChartSeriesByResidue(residues, offset));
-			chartNormalized.setData(aaProfiler.getAllNormalizedXYChartSeriesByResidue(residues, offset));
-			showCorrelationMatrix();
+			aaProfiler.calculateAllXYChartSeriesByResidue(residues, offset);
+			aaProfiler.calculateAllNormalizedXYChartSeriesByResidue(residues, offset);
 			showRankedCorrelations();
 		}
 	}
 	
 	private void showRankedCorrelations() {
-		chartRankedCorrelations.setData(aaProfiler.getAllRankedCorrelationSeriesByResidue(getAaListFromString(choiceAminoAcid.getSelectionModel().getSelectedItem()), spinnerOffset.getValue()));
+		aaProfiler.calculateAllRankedCorrelationSeriesByResidue(getAaListFromString(choiceAminoAcid.getSelectionModel().getSelectedItem()), spinnerOffset.getValue());
 	}
 	
 	private List<Character> getAaListFromString(String string) {
