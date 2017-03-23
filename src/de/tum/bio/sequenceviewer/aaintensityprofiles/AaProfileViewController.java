@@ -153,9 +153,13 @@ public class AaProfileViewController {
 	
 	private List<Character> getAaListFromString(String string) {
 		List<Character> list = new ArrayList<>();
-		
-		list.add(string.charAt(0));
-		
+		if (string == "All") {
+			for (String entry : Toolbox.aminoAcidsSingleLetter()) {
+				list.add(entry.charAt(0));
+			}
+		} else {
+			list.add(string.charAt(0));
+		}
 		return list;
 	}
 	
