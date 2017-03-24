@@ -5,12 +5,15 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.controlsfx.control.CheckListView;
+
 import de.tum.bio.proteomics.Toolbox;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -18,6 +21,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -53,6 +57,10 @@ public class AaProfileViewController {
 	@FXML
 	NumberAxis yAxisNormalized;
 	
+	@FXML
+	Button buttonUpdateExperiments;
+	@FXML
+	VBox vBoxExperiments;
 	
 	@FXML
 	VBox vBoxContent;
@@ -69,6 +77,8 @@ public class AaProfileViewController {
 	Label statusMessage;
 	@FXML
 	ProgressBar progressBar;
+	
+	private CheckListView<String> listViewExperiments;
 	
 	public void init(Stage stage) {
 		this.stage = stage;
@@ -88,8 +98,13 @@ public class AaProfileViewController {
 		choiceAminoAcid.setItems(FXCollections.observableArrayList(residues));
 		choiceAminoAcid.getSelectionModel().select("K");
 		
-		spinnerOffset.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-1, 1));
+		spinnerOffset.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-10, 10));
 		spinnerOffset.getValueFactory().setValue(0);
+		
+		listViewExperiments = new CheckListView<>();
+		listViewExperiments.getStyleClass().add("listViewExperiments");
+		vBoxExperiments.getChildren().add(listViewExperiments);
+		VBox.setVgrow(listViewExperiments, Priority.ALWAYS);
 	}
 	
 	public Stage getStage() {
@@ -105,24 +120,32 @@ public class AaProfileViewController {
 		
 		aaProfiler.init();
 		
+		listViewExperiments.setItems(aaProfiler.getExperiments());
+		for (String item : listViewExperiments.getItems()) {
+			if (!item.contains("DMSO")) {
+				listViewExperiments.getCheckModel().check(item);
+			}
+		}
+		aaProfiler.setSelectedExperiments(listViewExperiments.getCheckModel().getCheckedItems());
+		
 		aaProfiler.readyProperty().addListener(event -> {
 			choiceAminoAcid.getSelectionModel().selectedItemProperty().addListener((obs, o, n) -> {
 				if (n == "All") {
-					update(null, 0);
+					update(null);
 				} else {
-					update(getAaListFromString(n), spinnerOffset.getValue());
+					update(getAaListFromString(n));
 				}
 			});
 			
 			spinnerOffset.valueProperty().addListener((obs, o, n) -> {
 				if (choiceAminoAcid.getSelectionModel().getSelectedItem() == "All") {
-					update(null, 0);
+					update(null);
 				} else {
-					update(getAaListFromString(choiceAminoAcid.getSelectionModel().getSelectedItem()), n);
+					update(getAaListFromString(choiceAminoAcid.getSelectionModel().getSelectedItem()));
 				}
 			});
 			
-			update(getAaListFromString("K"), spinnerOffset.getValue());
+			update(getAaListFromString("K"));
 			chart.setData(aaProfiler.getSeries());
 			chartNormalized.setData(aaProfiler.getNormalizedSeries());
 			chartRankedCorrelations.setData(aaProfiler.getCorrelations());
@@ -133,7 +156,7 @@ public class AaProfileViewController {
 		
 	}
 	
-	private void update(List<Character> residues, int offset) {
+	private void update(List<Character> residues) {
 		yAxis.setForceZeroInRange(false);
 		yAxisNormalized.setForceZeroInRange(false);
 		if (residues == null) {
@@ -141,14 +164,14 @@ public class AaProfileViewController {
 			aaProfiler.getAllNormalizedXYChartSeries();
 			showRankedCorrelations();
 		} else {
-			aaProfiler.calculateAllXYChartSeriesByResidue(residues, offset);
-			aaProfiler.calculateAllNormalizedXYChartSeriesByResidue(residues, offset);
+			aaProfiler.calculateAllXYChartSeriesByResidue(residues, spinnerOffset.getValue());
+			aaProfiler.calculateAllNormalizedXYChartSeriesByResidue(residues, spinnerOffset.getValue());
 			showRankedCorrelations();
 		}
 	}
 	
 	private void showRankedCorrelations() {
-		aaProfiler.calculateAllRankedCorrelationSeriesByResidue(getAaListFromString(choiceAminoAcid.getSelectionModel().getSelectedItem()), spinnerOffset.getValue());
+		aaProfiler.updateCorrelationsByExperiments(getAaListFromString(choiceAminoAcid.getSelectionModel().getSelectedItem()), spinnerOffset.getValue());
 	}
 	
 	private List<Character> getAaListFromString(String string) {
@@ -163,4 +186,8 @@ public class AaProfileViewController {
 		return list;
 	}
 	
+	public void updateExperiments() {
+		aaProfiler.updateCorrelationsByExperiments(getAaListFromString(choiceAminoAcid.getSelectionModel().getSelectedItem()), spinnerOffset.getValue());
+		showRankedCorrelations();
+	}
 }

@@ -13,6 +13,7 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
@@ -91,7 +92,7 @@
                </HBox.margin>
             </Label>
             <Label alignment="CENTER" text="Amino acid:" />
-            <ChoiceBox fx:id="choiceAminoAcid" prefWidth="60.0">
+            <ChoiceBox fx:id="choiceAminoAcid" prefWidth="60.0" styleClass="choiceAminoAcid">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin></ChoiceBox>
@@ -130,11 +131,42 @@
                   <Insets bottom="3.0" left="5.0" right="5.0" top="3.0" />
                </HBox.margin>
             </Label>
-            <ProgressBar fx:id="progressBar" prefWidth="100.0" progress="0.0">
+            <ProgressBar fx:id="progressBar" prefWidth="100.0" progress="0.0" styleClass="progressBar">
                <HBox.margin>
                   <Insets bottom="3.0" right="5.0" top="3.0" />
                </HBox.margin>
             </ProgressBar>
          </children></HBox>
    </bottom>
+   <left>
+      <VBox prefWidth="200.0" styleClass="vBoxExperimentList">
+         <children>
+            <HBox alignment="CENTER_LEFT">
+               <VBox.margin>
+                  <Insets left="7.0" />
+               </VBox.margin>
+               <children>
+                  <Label prefHeight="31.0" text="Available Experiments" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Button fx:id="buttonUpdateExperiments" mnemonicParsing="false" onAction="#updateExperiments" prefHeight="27.0" prefWidth="27.0" text="%fa.refresh">
+                     <font>
+                        <Font name="FontAwesome" size="12.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                     <tooltip>
+                        <Tooltip text="Refresh profile view with experiment selection" />
+                     </tooltip>
+                  </Button>
+               </children>
+            </HBox>
+            <ScrollPane fitToHeight="true" fitToWidth="true" styleClass="scrollPaneExperiments" VBox.vgrow="ALWAYS">
+               <content>
+                  <VBox fx:id="vBoxExperiments" />
+               </content>
+            </ScrollPane>
+         </children>
+      </VBox>
+   </left>
 </BorderPane>

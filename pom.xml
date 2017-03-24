@@ -47,5 +47,10 @@
   		<artifactId>weka-stable</artifactId>
   		<version>3.8.0</version>
   	</dependency>
+  	<dependency>
+	    <groupId>org.controlsfx</groupId>
+	    <artifactId>controlsfx</artifactId>
+	    <version>8.40.12</version>
+	</dependency>
   </dependencies>
 </project>

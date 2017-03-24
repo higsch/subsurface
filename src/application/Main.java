@@ -37,7 +37,7 @@ public class Main extends Application {
 			primaryStage.setTitle("ProteomeDiver");
 			
 			// Load fonts
-	        Font.loadFont(Main.class.getResourceAsStream("/font/fontawesome-webfont.ttf"), 10);
+	        Font.loadFont(Main.class.getResourceAsStream("/fontawesome-webfont.ttf"), 10);
 
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("Main.fxml"));
 			loader.setResources(ResourceBundle.getBundle("fontawesome"));

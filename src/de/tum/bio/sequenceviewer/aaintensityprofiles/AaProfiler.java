@@ -11,6 +11,7 @@ import java.util.Set;
 
 import de.tum.bio.proteomics.ProteinGroup;
 import de.tum.bio.proteomics.Toolbox;
+import de.tum.bio.utils.AlphanumComparator;
 import de.tum.bio.utils.Correlator;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -32,6 +33,7 @@ public class AaProfiler {
 	
 	private ProteinGroup protein;
 	private Map<Integer, Map<String, Long>> profileMap;
+	private ObservableList<String> experiments = FXCollections.observableArrayList();
 	private Map<String, Map<String, Long>> reducedProfileMap = new HashMap<>();
 	
 	private Map<String, XYChart.Series<String, Double>> seriesMap;
@@ -42,6 +44,8 @@ public class AaProfiler {
 	private ObservableList<XYChart.Series<String, Double>> chartSeries = FXCollections.observableArrayList();
 	private ObservableList<XYChart.Series<String, Double>> chartNormalizedSeries = FXCollections.observableArrayList();
 	private ObservableList<XYChart.Series<Integer, Double>> chartCorrelations = FXCollections.observableArrayList();
+	
+	private ObservableList<String> selectedExperiments = FXCollections.observableArrayList();
 	
 	public AaProfiler() {
 		// empty
@@ -83,8 +87,26 @@ public class AaProfiler {
 		return status;
 	}
 	
+	public ObservableList<String> getSelectedExperiments() {
+		return selectedExperiments;
+	}
+	
+	public void setSelectedExperiments(ObservableList<String> selectedExperiments) {
+		this.selectedExperiments = selectedExperiments;
+	}
+	
 	public void addProfileMap(Map<Integer, Map<String, Long>> profileMap) {
 		this.profileMap = profileMap;
+		if (profileMap.size() > 0) {
+			for (String experiment : profileMap.get(1).keySet()) {
+				experiments.add(experiment);
+			}
+			Collections.sort(experiments, new AlphanumComparator<>());;
+		}
+	}
+	
+	public ObservableList<String> getExperiments() {
+		return experiments;
 	}
 	
 	public ObservableList<XYChart.Series<String, Double>> getSeries() {
@@ -146,8 +168,8 @@ public class AaProfiler {
 		List<Integer> positionList = new ArrayList<>();
 		for (int position = 1; position <= protein.getSequenceAsString().length(); position++) {
 			positionList.add(position);
-			if (profileMap.containsKey(position - 1)) {
-				if (profileMap.get(position).toString().equals(profileMap.get(position - 1).toString())) {
+			if (profileMap.containsKey(position + 1)) {
+				if (profileMap.get(position).equals(profileMap.get(position + 1))) {
 					continue;
 				}
 			}
@@ -302,17 +324,19 @@ public class AaProfiler {
 		// Create map with double profile values
 		for (Entry<String, Map<String, Long>> entry : reducedProfileMap.entrySet()) {
 			for (Entry<String, Long> dataPoint : entry.getValue().entrySet()) {
-				if (!map.containsKey(entry.getKey())) {
-					map.put(entry.getKey(), new ArrayList<Double>());
+				if (selectedExperiments.contains(dataPoint.getKey())) {
+					if (!map.containsKey(entry.getKey())) {
+						map.put(entry.getKey(), new ArrayList<Double>());
+					}
+					double intensity;
+					if (dataPoint.getValue() == null) {
+						intensity = 0d; //Double.NaN;
+					} else {
+						intensity = (double) dataPoint.getValue();
+					}
+					map.get(entry.getKey()).add(intensity);
 				}
-				double intensity;
-				if (dataPoint.getValue() == null) {
-					intensity = 0d; //Double.NaN;
-				} else {
-					intensity = (double) dataPoint.getValue();
-				}
-				map.get(entry.getKey()).add(intensity);
-			}	
+			}
 		}
 		
 		return map;
@@ -326,13 +350,15 @@ public class AaProfiler {
 		Correlator cor = new Correlator();
 
 		for (Entry<String, List<Double>> profile : doubleProfileMap.entrySet()) {
-			if (!map.containsKey(profile.getKey())) {
-				map.put(profile.getKey(), new HashMap<String, Double>());
-			}
-			
-			for (Entry<String, List<Double>> compProfile : doubleProfileMap.entrySet()) {
-				Double coeff = cor.correlateOverlap(Toolbox.convertToDoubleArray(profile.getValue().toArray()), Toolbox.convertToDoubleArray(compProfile.getValue().toArray()));
-				map.get(profile.getKey()).put(compProfile.getKey(), (double) coeff);
+			if (profile.getValue().size() > 1) {
+				if (!map.containsKey(profile.getKey())) {
+					map.put(profile.getKey(), new HashMap<String, Double>());
+				}
+				
+				for (Entry<String, List<Double>> compProfile : doubleProfileMap.entrySet()) {
+					Double coeff = cor.correlateOverlap(Toolbox.convertToDoubleArray(profile.getValue().toArray()), Toolbox.convertToDoubleArray(compProfile.getValue().toArray()));
+					map.get(profile.getKey()).put(compProfile.getKey(), (double) coeff);
+				}
 			}
 		}
 
@@ -381,12 +407,12 @@ public class AaProfiler {
 						}
 					}
 				}
+				updateProgress(0.0, 1.0);
+				updateMessage("");
 				return chartCorrelationsTmp;
 			}
 		};
 		task.setOnSucceeded(workerStateEvent -> {
-			//progress.set(0.0);
-			//status.set("");
 			chartCorrelations.clear();
 			chartCorrelations.addAll(task.getValue());
 		});
@@ -396,8 +422,8 @@ public class AaProfiler {
 			    e.printStackTrace();
 			}
 		});
-		//progress.bind(task.progressProperty());
-		//status.bind(task.messageProperty());
+		progress.bind(task.progressProperty());
+		status.bind(task.messageProperty());
 		Thread t = new Thread(task);
 		t.start();
 	}
@@ -412,5 +438,33 @@ public class AaProfiler {
 			}
 		}
 		return tmp.toString();
+	}
+	
+	public void updateCorrelationsByExperiments(List<Character> residues, int offset) {
+		Task<List<XYChart.Series<Integer, Double>>> task = new Task<List<XYChart.Series<Integer, Double>>>() {
+			@Override
+			protected List<XYChart.Series<Integer, Double>> call() throws Exception {
+				updateProgress(-1.0, 1.0);
+				updateMessage("Calculate values...");
+				doubleProfileMap = getDoubleProfileMap();
+				correlationMap = getCorrelationMap();
+				updateProgress(0.0, 1.0);
+				updateMessage("");
+				return null;
+			}
+		};
+		task.setOnSucceeded(workerStateEvent -> {
+			calculateAllRankedCorrelationSeriesByResidue(residues, offset);
+		});
+		task.exceptionProperty().addListener((observable, oldValue, newValue) ->  {
+			if(newValue != null) {
+				Exception e = (Exception) newValue;
+			    e.printStackTrace();
+			}
+		});
+		progress.bind(task.progressProperty());
+		status.bind(task.messageProperty());
+		Thread t = new Thread(task);
+		t.start();
 	}
 }

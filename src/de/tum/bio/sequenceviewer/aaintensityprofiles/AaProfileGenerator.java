@@ -3,10 +3,9 @@ package de.tum.bio.sequenceviewer.aaintensityprofiles;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.Map.Entry;
+import java.util.ResourceBundle;
 
-import application.Main;
 import de.tum.bio.proteomics.ProteinGroup;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -14,7 +13,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class AaProfileGenerator extends Stage {
@@ -51,7 +49,7 @@ public class AaProfileGenerator extends Stage {
 	
 	private void showWindow(AaProfiler aaProfiler) {
 		try {
-			Font.loadFont(Main.class.getResourceAsStream("/font/fontawesome-webfont.ttf"), 10);
+			//Font.loadFont(AaProfileGenerator.class.getResourceAsStream("/fontawesome-webfont.ttf"), 10);
 			
 			setTitle("Profile view of " + aaProfiler.getProteinIds());
 			
@@ -62,7 +60,7 @@ public class AaProfileGenerator extends Stage {
 			controller.init(this);
 			
 			
-			Scene scene = new Scene(root, 1000, 900);
+			Scene scene = new Scene(root, 1200, 900);
 			scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
 			setScene(scene);
 			

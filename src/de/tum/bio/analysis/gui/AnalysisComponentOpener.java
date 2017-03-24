@@ -52,22 +52,16 @@ public final class AnalysisComponentOpener {
 						MQReader proteinGroupsReader = new MQProteinGroupsReader();
 						proteinGroupsReader.getProgressProperty().addListener((obs, oldProgress, newProgress) -> updateProgress((double) newProgress, 1.0));
 						proteinGroupsReader.getStatusProperty().addListener((obs, oldStatus, newStatus) -> updateMessage(newStatus));
-						try {
-							proteinGroupsList = proteinGroupsReader.read(txtDirectory, null);
-						} catch (IOException e) {
-							Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
-							alert.showAndWait();
-						}
+						
+						proteinGroupsList = proteinGroupsReader.read(txtDirectory, null);
+						
 						List<AnalysisComponent> peptidesList = null;
 						MQReader peptidesReader = new MQPeptidesReader();
 						peptidesReader.getProgressProperty().addListener((obs, oldProgress, newProgress) -> updateProgress((double) newProgress, 1.0));
 						peptidesReader.getStatusProperty().addListener((obs, oldStatus, newStatus) -> updateMessage(newStatus));
-						try {
-							peptidesList = peptidesReader.read(txtDirectory, null);
-						} catch (IOException e) {
-							Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
-							alert.showAndWait();
-						}
+						
+						peptidesList = peptidesReader.read(txtDirectory, null);
+						
 						tMap.put(AnalysisComponentType.MaxQuant_ProteinGroups, proteinGroupsList);
 						tMap.put(AnalysisComponentType.MaxQuant_Peptides, peptidesList);
 						peptideId = new PeptideId(-1, tMap, Paths.get(txtDirectory).getFileName().toString());
@@ -111,7 +105,7 @@ public final class AnalysisComponentOpener {
 				analysis.setDataAssigned(true);
 	        });
 			readTask.setOnFailed(workerStateEvent -> {
-				Alert alert = new Alert(AlertType.ERROR, workerStateEvent.getEventType().toString(), ButtonType.OK);
+				Alert alert = new Alert(AlertType.ERROR, "An error occured while loading files.\n" + workerStateEvent.getEventType().toString(), ButtonType.OK);
 				alert.showAndWait();
 			});
 			readTask.exceptionProperty().addListener((observable, oldValue, newValue) ->  {
