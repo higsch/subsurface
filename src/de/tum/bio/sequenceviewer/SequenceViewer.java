@@ -11,7 +11,7 @@ import com.compomics.util.experiment.biology.Enzyme;
 
 import de.tum.bio.proteomics.Peptide;
 import de.tum.bio.proteomics.PeptideId;
-import de.tum.bio.sequenceviewer.aaintensityprofiles.AaProfileGenerator;
+import de.tum.bio.sequenceviewer.aaintensityprofiles.ProfileGenerator;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
@@ -429,7 +429,7 @@ public class SequenceViewer extends BorderPane {
 			showExperimentIntensities();
 		}
 		
-		AaProfileGenerator aaProfileGenerator = new AaProfileGenerator(owner);
+		ProfileGenerator aaProfileGenerator = new ProfileGenerator(owner);
 		aaProfileGenerator.make(experimentIntensityMap, peptideId.getProteinGroupById(proteinGroupId));
 	}
 	

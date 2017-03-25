@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import de.tum.bio.proteomics.ProteinGroup;
 import de.tum.bio.proteomics.Toolbox;
@@ -26,7 +25,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 
-public class AaProfiler {
+public class AaProfiler extends Profiler {
 	private BooleanProperty ready = new SimpleBooleanProperty(false);
 	private DoubleProperty progress = new SimpleDoubleProperty(0.0);
 	private StringProperty status = new SimpleStringProperty("");
@@ -134,7 +133,7 @@ public class AaProfiler {
 				normalizedSeriesMap = generateSeriesMap(true);
 				
 				updateMessage("Calculate correlation coefficients...");
-				doubleProfileMap = getDoubleProfileMap();
+				doubleProfileMap = getDoubleProfileMap(reducedProfileMap, selectedExperiments);
 				correlationMap = getCorrelationMap();
 				
 				updateMessage("");
@@ -251,8 +250,6 @@ public class AaProfiler {
 			}
 		};
 		task.setOnSucceeded(workerStateEvent -> {
-			//progress.set(0.0);
-			//status.set("");
 			chartSeries.clear();
 			chartSeries.addAll(task.getValue());
 		});
@@ -262,19 +259,8 @@ public class AaProfiler {
 			    e.printStackTrace();
 			}
 		});
-		//progress.bind(task.progressProperty());
-		//status.bind(task.messageProperty());
 		Thread t = new Thread(task);
 		t.start();
-	}
-	
-	private String getListKey(int position, Set<String> keyList) {
-		for (String key : keyList) {
-			if ((key.contains(" " + String.valueOf(position) + ", ")) || (key.contains("[" + String.valueOf(position) + ", ")) || (key.contains(" " + String.valueOf(position) + "]"))) {
-				return key;
-			}
-		}
-		return null;
 	}
 	
 	public void calculateAllNormalizedXYChartSeriesByResidue(List<Character> residues, int offset) {
@@ -301,8 +287,6 @@ public class AaProfiler {
 			}
 		};
 		task.setOnSucceeded(workerStateEvent -> {
-			//progress.set(0.0);
-			//status.set("");
 			chartNormalizedSeries.clear();
 			chartNormalizedSeries.addAll(task.getValue());
 		});
@@ -312,34 +296,8 @@ public class AaProfiler {
 			    e.printStackTrace();
 			}
 		});
-		//progress.bind(task.progressProperty());
-		//status.bind(task.messageProperty());
 		Thread t = new Thread(task);
 		t.start();
-	}
-	
-	private Map<String, List<Double>> getDoubleProfileMap() {
-		Map<String, List<Double>> map = new HashMap<>();
-		
-		// Create map with double profile values
-		for (Entry<String, Map<String, Long>> entry : reducedProfileMap.entrySet()) {
-			for (Entry<String, Long> dataPoint : entry.getValue().entrySet()) {
-				if (selectedExperiments.contains(dataPoint.getKey())) {
-					if (!map.containsKey(entry.getKey())) {
-						map.put(entry.getKey(), new ArrayList<Double>());
-					}
-					double intensity;
-					if (dataPoint.getValue() == null) {
-						intensity = 0d; //Double.NaN;
-					} else {
-						intensity = (double) dataPoint.getValue();
-					}
-					map.get(entry.getKey()).add(intensity);
-				}
-			}
-		}
-		
-		return map;
 	}
 	
 	private Map<String, Map<String, Double>> getCorrelationMap() {
@@ -446,7 +404,7 @@ public class AaProfiler {
 			protected List<XYChart.Series<Integer, Double>> call() throws Exception {
 				updateProgress(-1.0, 1.0);
 				updateMessage("Calculate values...");
-				doubleProfileMap = getDoubleProfileMap();
+				doubleProfileMap = getDoubleProfileMap(reducedProfileMap, selectedExperiments);
 				correlationMap = getCorrelationMap();
 				updateProgress(0.0, 1.0);
 				updateMessage("");
