@@ -32,7 +32,7 @@ public abstract class Profiler {
 		
 		return map;
 	}
-	
+	// Check, this is full of nonsense...
 	protected String getListKey(int position, Set<String> keyList) {
 		for (String key : keyList) {
 			if ((key.contains(String.valueOf(position)) || key.contains(" " + String.valueOf(position) + ", ")) || (key.contains("[" + String.valueOf(position) + ", ")) || (key.contains(" " + String.valueOf(position) + "]"))) {

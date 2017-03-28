@@ -319,7 +319,6 @@ public class AaProfiler extends Profiler {
 				}
 			}
 		}
-
 		return map;
 	}
 
