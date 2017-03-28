@@ -32,10 +32,10 @@ public abstract class Profiler {
 		
 		return map;
 	}
-	// Check, this is full of nonsense...
+	// Check again
 	protected String getListKey(int position, Set<String> keyList) {
 		for (String key : keyList) {
-			if ((key.contains(String.valueOf(position)) || key.contains(" " + String.valueOf(position) + ", ")) || (key.contains("[" + String.valueOf(position) + ", ")) || (key.contains(" " + String.valueOf(position) + "]"))) {
+			if ((key.contains("[" + String.valueOf(position) + "]") || key.contains(" " + String.valueOf(position) + ", ")) || (key.contains("[" + String.valueOf(position) + ", ")) || (key.contains(" " + String.valueOf(position) + "]"))) {
 				return key;
 			}
 		}
