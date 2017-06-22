@@ -19,7 +19,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
- * Represents a FASTA file.
+ * Deserializes FASTA files.
  *
  * @author Matthias Stahl
  */

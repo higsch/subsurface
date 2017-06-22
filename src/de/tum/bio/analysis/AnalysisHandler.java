@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import application.AnalysisTreeObject;
 import application.Main;
 import application.MainController;
 import de.tum.bio.analysis.gui.AnalysisComponentOpener;
@@ -118,8 +119,23 @@ public final class AnalysisHandler {
 		addItem(-1, null, null);
 	}
 	
-	public void removeAnalysis(int id) {
-		analysisCollection.remove(id);
+	public void removeItem(int analysisId, int itemId, AnalysisComponentType analysisComponentType) {
+		switch (analysisComponentType) {
+			case Analysis:
+				analysisCollection.remove(analysisId);
+				break;
+			case PeptideId:
+				analysisCollection.get(analysisId).removePeptideId(itemId);
+				break;
+			case Statistics:
+				analysisCollection.get(analysisId).removePeptideId(itemId);
+				break;
+			case Fasta:
+				analysisCollection.get(analysisId).removeFastaFile(itemId);
+				break;
+			default:
+				break;
+		}
 	}
 	
 	public ObservableMap<Integer, Analysis> getAllAnalyses() {
@@ -138,22 +154,25 @@ public final class AnalysisHandler {
 		return analysisCollection.isEmpty();
 	}
 	
-	@SuppressWarnings("unchecked")
-	public <T extends AnalysisComponent> void buildTreeView(TreeView<T> treeView) {
-		TreeItem<T> selectedItem = treeView.getSelectionModel().getSelectedItem();
-		TreeItem<T> root = new TreeItem<T>();
+	public void buildTreeView(TreeView<AnalysisTreeObject> treeView) {
+		TreeItem<AnalysisTreeObject> selectedItem = treeView.getSelectionModel().getSelectedItem();
+		TreeItem<AnalysisTreeObject> root = new TreeItem<>();
 		for (Entry<Integer, Analysis> analysis : getAllAnalyses().entrySet()) {
-			TreeItem<T> analysisItem = (TreeItem<T>) new TreeItem<Analysis>(analysis.getValue());
+			TreeItem<AnalysisTreeObject> analysisItem = new TreeItem<>();
+			analysisItem.setValue(new AnalysisTreeObject(analysis.getValue().getName(), analysis.getValue().getId(), -1, AnalysisComponentType.Analysis));
 			for (Entry<Integer, PeptideId> peptideId : analysis.getValue().getPeptideIds().entrySet()) {
-				TreeItem<T> peptideIdItem = (TreeItem<T>) new TreeItem<PeptideId>(peptideId.getValue());
+				TreeItem<AnalysisTreeObject> peptideIdItem = new TreeItem<>();
+				peptideIdItem.setValue(new AnalysisTreeObject(peptideId.getValue().toString(), analysis.getValue().getId(), peptideId.getValue().getId(), AnalysisComponentType.PeptideId));
 				analysisItem.getChildren().add(peptideIdItem);
 			}
 			for (Entry<Integer, StatisticsFile> statisticsFile : analysis.getValue().getStatisticsFiles().entrySet()) {
-				TreeItem<T> statisticsFileItem = (TreeItem<T>) new TreeItem<StatisticsFile>(statisticsFile.getValue());
+				TreeItem<AnalysisTreeObject> statisticsFileItem = new TreeItem<>();
+				statisticsFileItem.setValue(new AnalysisTreeObject(statisticsFile.getValue().toString(), analysis.getValue().getId(), statisticsFile.getValue().getId(), AnalysisComponentType.Statistics));
 				analysisItem.getChildren().add(statisticsFileItem);
 			}
 			for (Entry<Integer, FastaFile> fastaFile : analysis.getValue().getFastaFiles().entrySet()) {
-				TreeItem<T> fastaFileItem = (TreeItem<T>) new TreeItem<FastaFile>(fastaFile.getValue());
+				TreeItem<AnalysisTreeObject> fastaFileItem = new TreeItem<>();
+				fastaFileItem.setValue(new AnalysisTreeObject(fastaFile.getValue().toString(), analysis.getValue().getId(), fastaFile.getValue().getId(), AnalysisComponentType.Fasta));
 				analysisItem.getChildren().add(fastaFileItem);
 			}
 			if (!analysisItem.isLeaf()) {

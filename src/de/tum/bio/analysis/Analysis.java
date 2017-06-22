@@ -91,7 +91,7 @@ public class Analysis implements AnalysisComponent {
 	}
 	
 	public PeptideId getPeptideId() {
-		return peptideIdentifications.get(analysisHandler.getSelectedPeptideIdId());
+		return peptideIdentifications.get(analysisHandler.getSelectedPeptideIdId()); // TODO: do not access AnalysisHandler class
 	}
 	
 	public ObservableMap<Integer, StatisticsFile> getStatisticsFiles() {

@@ -12,8 +12,6 @@ import org.xmlpull.v1.XmlPullParserException;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 
-import de.tum.bio.analysis.Analysis;
-import de.tum.bio.analysis.AnalysisComponent;
 import de.tum.bio.analysis.AnalysisComponentType;
 import de.tum.bio.analysis.AnalysisHandler;
 import de.tum.bio.analysis.VolcanoPlotDot;
@@ -30,18 +28,21 @@ import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -51,6 +52,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Callback;
 import javafx.util.StringConverter;
 
 public class MainController {
@@ -84,7 +86,7 @@ public class MainController {
 	
 	
 	@FXML
-	TreeView<? extends AnalysisComponent> treeView;
+	TreeView<AnalysisTreeObject> treeView;
 	@FXML
 	TableView<ProteinGroup> tableProteinGroups;
 	@FXML
@@ -117,6 +119,43 @@ public class MainController {
 		stage = mainApp.getStage();
 		analysisHandler.setController(this);
 		treeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		
+		treeView.setCellFactory(new Callback<TreeView<AnalysisTreeObject>, TreeCell<AnalysisTreeObject>>() {
+	        
+			@Override
+			public TreeCell<AnalysisTreeObject> call(TreeView<AnalysisTreeObject> param) {
+	            TreeCell<AnalysisTreeObject> treeCell = new TreeCell<AnalysisTreeObject>() {
+	                @Override
+
+	                protected void updateItem(AnalysisTreeObject item, boolean empty) {
+	                    super.updateItem(item, empty);
+	                    if (!empty && item != null) {
+	                        setText(item.toString());
+	                        setGraphic(getTreeItem().getGraphic());
+
+	                        final ContextMenu contextMenu = new ContextMenu();
+
+	                        MenuItem menuItem = new MenuItem("Delete");
+	                        menuItem.setOnAction(new EventHandler<ActionEvent>() {
+	                            public void handle(ActionEvent e) {
+	                                analysisHandler.removeItem(item.getAnalysisId(), item.getItemId(), item.getAnalysisComponentType());
+	                            }
+	                        });
+	                        contextMenu.getItems().addAll(menuItem);
+	                        setContextMenu(contextMenu);
+
+	                    } else {
+	                        setText(null);
+	                        setGraphic(null);
+	                        setContextMenu(null);
+	                    }
+	                }
+	            };
+	            return treeCell;
+	        }
+
+	    });
+		
 		
 		// Initialize protein groups table
 		TableColumn<ProteinGroup, String> colProteinGroupsDatabaseIds = new TableColumn<>("IDs");
@@ -179,28 +218,28 @@ public class MainController {
 		sequenceViewParent.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
 		
 		// React to changes in the selection model of treeview
-		treeView.getSelectionModel().getSelectedItems().addListener((ListChangeListener<TreeItem<? extends AnalysisComponent>>) c -> {
+		treeView.getSelectionModel().getSelectedItems().addListener((ListChangeListener<TreeItem<AnalysisTreeObject>>) c -> {
 			boolean combiningSequencesIsDisabled = true;
 			boolean combiningStatisticsIsDisabled = true;
 			if (c.getList().size() == 2) {
-				List<AnalysisComponent> list = new ArrayList<>(2);
+				List<AnalysisComponentType> list = new ArrayList<>(2);
 				int index = 0;
-				for (TreeItem<? extends AnalysisComponent> item : c.getList()) {
-					list.add(index, item.getValue());
+				for (TreeItem<AnalysisTreeObject> item : c.getList()) {
+					list.add(index, item.getValue().getAnalysisComponentType());
 					index++;
 				}
 				
 				// Activate sequence combination button only if correct analysis components are selected
-				if ((list.get(0) instanceof PeptideId) && (list.get(1) instanceof FastaFile)) {
+				if ((list.get(0) == AnalysisComponentType.PeptideId) && (list.get(1) == AnalysisComponentType.Fasta)) {
 					combiningSequencesIsDisabled = false;
-				} else if ((list.get(1) instanceof PeptideId) && (list.get(0) instanceof FastaFile)) {
+				} else if ((list.get(1) == AnalysisComponentType.PeptideId) && (list.get(0) == AnalysisComponentType.Fasta)) {
 					combiningSequencesIsDisabled = false;
 				}
 				
 				// Activate statistics combination button only if correct analysis components are selected
-				if ((list.get(0) instanceof PeptideId) && (list.get(1) instanceof StatisticsFile)) {
+				if ((list.get(0) == AnalysisComponentType.PeptideId) && (list.get(1) == AnalysisComponentType.Statistics)) {
 					combiningStatisticsIsDisabled = false;
-				} else if ((list.get(1) instanceof PeptideId) && (list.get(0) instanceof StatisticsFile)) {
+				} else if ((list.get(1) == AnalysisComponentType.PeptideId) && (list.get(0) == AnalysisComponentType.Statistics)) {
 					combiningStatisticsIsDisabled = false;
 				}
 			}
@@ -208,11 +247,11 @@ public class MainController {
 			buttonCombineStatistics.setDisable(combiningStatisticsIsDisabled);
 		
 			if (c.getList().size() == 1) {
-				if (treeView.getSelectionModel().getSelectedItem().getValue() instanceof PeptideId) {
-					PeptideId peptideId = (PeptideId) treeView.getSelectionModel().getSelectedItem().getValue();
-					tableProteinGroups.setItems(FXCollections.observableArrayList(peptideId.getAllProteinGroups().values()));
-					analysisHandler.setSelectedAnalysisId(c.getList().get(0).getParent().getValue().getId());
-					analysisHandler.setSelectedPeptideIdId(peptideId.getId());
+				if (treeView.getSelectionModel().getSelectedItem().getValue().getAnalysisComponentType() == AnalysisComponentType.PeptideId) {
+					analysisHandler.setSelectedAnalysisId(treeView.getSelectionModel().getSelectedItem().getValue().getAnalysisId());
+					analysisHandler.setSelectedPeptideIdId(treeView.getSelectionModel().getSelectedItem().getValue().getItemId());
+					PeptideId peptideId = analysisHandler.getAnalysis().getPeptideId();
+					tableProteinGroups.setItems(peptideId.getAllProteinGroupsAsList());
 					updateVolcanoPlot(peptideId);
 				}
 			}
@@ -239,7 +278,7 @@ public class MainController {
 		});
 	}
 	
-	public TreeView<? extends AnalysisComponent> getTreeView() {
+	public TreeView<AnalysisTreeObject> getTreeView() {
 		return treeView;
 	}
 	
@@ -286,11 +325,11 @@ public class MainController {
 	public void handleCombineSequencesAndProteinGroups(ActionEvent event) {
 		PeptideId peptideId = null;
 		FastaFile fastaFile = null;
-		for (TreeItem<? extends AnalysisComponent> item : treeView.getSelectionModel().getSelectedItems()) {
-			if (item.getValue() instanceof PeptideId) {
-				peptideId = (PeptideId) item.getValue();
-			} else if (item.getValue() instanceof FastaFile) {
-				fastaFile = (FastaFile) item.getValue();
+		for (TreeItem<AnalysisTreeObject> item : treeView.getSelectionModel().getSelectedItems()) {
+			if (item.getValue().getAnalysisComponentType() == AnalysisComponentType.PeptideId) {
+				peptideId = analysisHandler.getAnalysis(item.getValue().getAnalysisId()).getPeptideId(item.getValue().getItemId());
+			} else if (item.getValue().getAnalysisComponentType() == AnalysisComponentType.Fasta) {
+				fastaFile = analysisHandler.getAnalysis(item.getValue().getAnalysisId()).getFastaFile(item.getValue().getItemId());
 			}
 		}
 		Toolbox.combineSequencesAndProteinGroups(fastaFile, peptideId.getAllProteinGroups(), mainApp);
@@ -300,11 +339,11 @@ public class MainController {
 	public void handleCombineStatisticsAndProteinGroups(ActionEvent event) {
 		PeptideId peptideId = null;
 		StatisticsFile statisticsFile = null;
-		for (TreeItem<? extends AnalysisComponent> item : treeView.getSelectionModel().getSelectedItems()) {
-			if (item.getValue() instanceof PeptideId) {
-				peptideId = (PeptideId) item.getValue();
-			} else if (item.getValue() instanceof StatisticsFile) {
-				statisticsFile = (StatisticsFile) item.getValue();
+		for (TreeItem<AnalysisTreeObject> item : treeView.getSelectionModel().getSelectedItems()) {
+			if (item.getValue().getAnalysisComponentType() == AnalysisComponentType.PeptideId) {
+				peptideId = analysisHandler.getAnalysis(item.getValue().getAnalysisId()).getPeptideId(item.getValue().getItemId());
+			} else if (item.getValue().getAnalysisComponentType() == AnalysisComponentType.Statistics) {
+				statisticsFile = analysisHandler.getAnalysis(item.getValue().getAnalysisId()).getStatisticsFile(item.getValue().getItemId());
 			}
 		}
 		if (peptideId.getId() == analysisHandler.getSelectedPeptideIdId()) {
@@ -346,16 +385,16 @@ public class MainController {
 	
 	private int getAnalysisId() {
 		int id = -1;
-		TreeItem<? extends AnalysisComponent> item = treeView.getSelectionModel().getSelectedItem();
+		TreeItem<AnalysisTreeObject> item = treeView.getSelectionModel().getSelectedItem();
 		if (item != null) {
 			while (true) {
-				if (item.getValue() instanceof Analysis) {
+				if (item.getValue().getAnalysisComponentType() == AnalysisComponentType.Analysis) {
 					break;
 				} else {
 					item = item.getParent();
 				}
 			}
-			id = item.getValue().getId();
+			id = item.getValue().getAnalysisId();
 		}
 		return id;
 	}

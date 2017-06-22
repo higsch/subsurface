@@ -15,6 +15,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 
 public class PeptideId implements AnalysisComponent {
 	
@@ -24,8 +25,8 @@ public class PeptideId implements AnalysisComponent {
 	private BooleanProperty sequencesAdded = new SimpleBooleanProperty(false);
 	private BooleanProperty statisticsAdded = new SimpleBooleanProperty(false);
 	
-	private Map<Integer, ProteinGroup> proteins = new HashMap<>();
-	private Map<Integer, Peptide> peptides = new HashMap<>();
+	private ObservableMap<Integer, ProteinGroup> proteins = FXCollections.observableHashMap();
+	private ObservableMap<Integer, Peptide> peptides = FXCollections.observableHashMap();
 	
 	private Map<Enzyme, Map<Integer, List<Peptide>>> digestionAssays = new HashMap<>();
 	
@@ -67,11 +68,11 @@ public class PeptideId implements AnalysisComponent {
 		return peptides.get(id);
 	}
 	
-	public Map<Integer, ProteinGroup> getAllProteinGroups() {
+	public ObservableMap<Integer, ProteinGroup> getAllProteinGroups() {
 		return proteins;
 	}
 	
-	public Map<Integer, Peptide> getAllPeptides() {
+	public ObservableMap<Integer, Peptide> getAllPeptides() {
 		return peptides;
 	}
 	
