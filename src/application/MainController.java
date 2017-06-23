@@ -144,9 +144,10 @@ public class MainController {
 	                        menuItem.setOnAction(new EventHandler<ActionEvent>() {
 	                            public void handle(ActionEvent e) {
 	                                analysisHandler.removeItem(item.getAnalysisId(), item.getItemId(), item.getAnalysisComponentType());
-	                                if ((item.getAnalysisId() == shownAnalysisId.get() && item.getItemId() == -1) || (item.getAnalysisId() == shownAnalysisId.get() && item.getItemId() == shownPeptideIdId.get())) {
-	                                	tableProteinGroups.setItems(null);
-	                                	tablePeptides.setItems(null);
+	                                if (item.getAnalysisComponentType() == AnalysisComponentType.Analysis || item.getAnalysisComponentType() == AnalysisComponentType.PeptideId) {
+	                                	if ((item.getAnalysisId() == shownAnalysisId.get() && item.getItemId() == -1) || (item.getAnalysisId() == shownAnalysisId.get() && item.getItemId() == shownPeptideIdId.get())) {
+		                                	clearSurface();
+	                                	}
 	                                }
 	                            }
 	                        });
@@ -434,6 +435,8 @@ public class MainController {
 			progressBar.progressProperty().bind(sequenceViewer.progressProperty());
 			statusLabel.textProperty().bind(sequenceViewer.statusProperty());
 			sequenceViewer.readyProperty().addListener(sequenceViewerReadyListener);
+		} else {
+			sequenceViewParent.getChildren().clear();
 		}
 	}
 	
@@ -449,5 +452,12 @@ public class MainController {
 	
 	public void sequenceViewCalculateAaProfiles() {
 		sequenceViewer.generateAaIntensityProfiles();
+	}
+	
+	private void clearSurface() {
+		tableProteinGroups.setItems(null);
+    	tablePeptides.setItems(null);
+    	volcanoPlot.setData(null);
+    	sequenceViewParent.getChildren().clear();
 	}
 }
