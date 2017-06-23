@@ -266,7 +266,9 @@ public class MainController {
 			buttonCombineSequences.setDisable(combiningSequencesIsDisabled);
 			buttonCombineStatistics.setDisable(combiningStatisticsIsDisabled);
 		
+			// Action, if only one item was selected
 			if (c.getList().size() == 1) {
+				// if this is a PeptideId
 				if (treeView.getSelectionModel().getSelectedItem().getValue().getAnalysisComponentType() == AnalysisComponentType.PeptideId) {
 					analysisHandler.setSelectedAnalysisId(treeView.getSelectionModel().getSelectedItem().getValue().getAnalysisId());
 					analysisHandler.getAnalysis().setSelectedPeptideIdId(treeView.getSelectionModel().getSelectedItem().getValue().getItemId());
@@ -275,10 +277,12 @@ public class MainController {
 					PeptideId peptideId = analysisHandler.getAnalysis().getPeptideId();
 					if (peptideId != null) {
 						tableProteinGroups.setItems(FXCollections.observableArrayList(peptideId.getAllProteinGroups().values()));
+						updateVolcanoPlot(peptideId);
+						selectProteinGroup(peptideId.getSelectedProteinGroup());
 					} else {
 						tableProteinGroups.setItems(null);
+						updateVolcanoPlot(null);
 					}
-					updateVolcanoPlot(peptideId);
 				}
 			}
 		});

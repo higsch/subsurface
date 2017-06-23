@@ -128,6 +128,10 @@ public class PeptideId implements AnalysisComponent {
 		return selectedProteinGroupId.get();
 	}
 	
+	public ProteinGroup getSelectedProteinGroup() {
+		return proteins.get(getSelectedProteinGroupId());
+	}
+	
 	public IntegerProperty selectedProteinGroupIdProperty() {
 		return selectedProteinGroupId;
 	}
@@ -138,6 +142,10 @@ public class PeptideId implements AnalysisComponent {
 	
 	public int getSelectedPeptideId() {
 		return selectedPeptideId.get();
+	}
+	
+	public Peptide getSelectedPeptide() {
+		return peptides.get(getSelectedPeptideId());
 	}
 	
 	public IntegerProperty selectedPeptideIdProperty() {
