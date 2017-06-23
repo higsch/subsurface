@@ -12,6 +12,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 
+import de.tum.bio.analysis.Analysis;
 import de.tum.bio.analysis.AnalysisComponentType;
 import de.tum.bio.analysis.AnalysisHandler;
 import de.tum.bio.analysis.VolcanoPlotDot;
@@ -48,6 +49,8 @@ import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
@@ -70,6 +73,11 @@ public class MainController {
 	
 	private IntegerProperty shownAnalysisId = new SimpleIntegerProperty(-1);
 	private IntegerProperty shownPeptideIdId = new SimpleIntegerProperty(-1);
+	
+	private Image analysisIcon = new Image(getClass().getResourceAsStream("/icons/analysis.png"));
+	private Image peptideIdIcon = new Image(getClass().getResourceAsStream("/icons/peptideId.png"));
+	private Image statisticsIcon = new Image(getClass().getResourceAsStream("/icons/statistics.png"));
+	private Image fastaFileIcon = new Image(getClass().getResourceAsStream("/icons/fastaFile.png"));
 	
 	@FXML
 	MenuItem menuItemOpenMaxQuant;
@@ -104,6 +112,8 @@ public class MainController {
 	NumberAxis volcanoPlotYAxis;
 
 	@FXML
+	VBox vBoxSequenceView;
+	@FXML
 	VBox sequenceViewParent;
 	@FXML
 	Label sequenceViewHeading;
@@ -130,8 +140,8 @@ public class MainController {
 			@Override
 			public TreeCell<AnalysisTreeObject> call(TreeView<AnalysisTreeObject> param) {
 	            TreeCell<AnalysisTreeObject> treeCell = new TreeCell<AnalysisTreeObject>() {
-	                @Override
-
+	                
+	            	@Override
 	                protected void updateItem(AnalysisTreeObject item, boolean empty) {
 	                    super.updateItem(item, empty);
 	                    if (!empty && item != null) {
@@ -385,7 +395,7 @@ public class MainController {
 	}
 	
 	private void updateVolcanoPlot(PeptideId peptideId) {
-		if (!volcanoPlot.getData().isEmpty()) {
+		if (volcanoPlot.getData() != null) {
 			volcanoPlot.getData().clear();
 		}
 		
@@ -452,6 +462,40 @@ public class MainController {
 	
 	public void sequenceViewCalculateAaProfiles() {
 		sequenceViewer.generateAaIntensityProfiles();
+	}
+	
+	public void buildTreeView() {
+		TreeItem<AnalysisTreeObject> selectedItem = treeView.getSelectionModel().getSelectedItem();
+		TreeItem<AnalysisTreeObject> root = new TreeItem<>();
+		for (Entry<Integer, Analysis> analysis : analysisHandler.getAllAnalyses().entrySet()) {
+			TreeItem<AnalysisTreeObject> analysisItem = new TreeItem<>();
+			analysisItem.setValue(new AnalysisTreeObject(analysis.getValue().getName(), analysis.getValue().getId(), -1, AnalysisComponentType.Analysis));
+			analysisItem.setGraphic(new ImageView(analysisIcon));
+			for (Entry<Integer, PeptideId> peptideId : analysis.getValue().getPeptideIds().entrySet()) {
+				TreeItem<AnalysisTreeObject> peptideIdItem = new TreeItem<>();
+				peptideIdItem.setValue(new AnalysisTreeObject(peptideId.getValue().toString(), analysis.getValue().getId(), peptideId.getValue().getId(), AnalysisComponentType.PeptideId));
+				peptideIdItem.setGraphic(new ImageView(peptideIdIcon));
+				analysisItem.getChildren().add(peptideIdItem);
+			}
+			for (Entry<Integer, StatisticsFile> statisticsFile : analysis.getValue().getStatisticsFiles().entrySet()) {
+				TreeItem<AnalysisTreeObject> statisticsFileItem = new TreeItem<>();
+				statisticsFileItem.setValue(new AnalysisTreeObject(statisticsFile.getValue().toString(), analysis.getValue().getId(), statisticsFile.getValue().getId(), AnalysisComponentType.Statistics));
+				statisticsFileItem.setGraphic(new ImageView(statisticsIcon));
+				analysisItem.getChildren().add(statisticsFileItem);
+			}
+			for (Entry<Integer, FastaFile> fastaFile : analysis.getValue().getFastaFiles().entrySet()) {
+				TreeItem<AnalysisTreeObject> fastaFileItem = new TreeItem<>();
+				fastaFileItem.setValue(new AnalysisTreeObject(fastaFile.getValue().toString(), analysis.getValue().getId(), fastaFile.getValue().getId(), AnalysisComponentType.Fasta));
+				fastaFileItem.setGraphic(new ImageView(fastaFileIcon));
+				analysisItem.getChildren().add(fastaFileItem);
+			}
+			if (!analysisItem.isLeaf()) {
+				analysisItem.setExpanded(true);
+			}
+			root.getChildren().add(analysisItem);
+		}
+		treeView.setRoot(root);
+		treeView.getSelectionModel().select(selectedItem);
 	}
 	
 	private void clearSurface() {

@@ -1,10 +1,8 @@
 package de.tum.bio.analysis;
 
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.Set;
 
-import application.AnalysisTreeObject;
 import application.Main;
 import application.MainController;
 import de.tum.bio.analysis.gui.AnalysisComponentOpener;
@@ -16,8 +14,6 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableMap;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
 
 /**
  * This class handles a set different analyses components.
@@ -47,7 +43,7 @@ public final class AnalysisHandler {
 		analysisCollection.addListener(new MapChangeListener<Integer, Analysis>() {
 			@Override
 			public void onChanged(MapChangeListener.Change<? extends Integer, ? extends Analysis> change) {
-				buildTreeView(controller.getTreeView());
+				controller.buildTreeView();
 			}
 		});
 	}
@@ -65,19 +61,19 @@ public final class AnalysisHandler {
 			analysis.getPeptideIds().addListener(new MapChangeListener<Integer, PeptideId>() {
 				@Override
 				public void onChanged(MapChangeListener.Change<? extends Integer, ? extends PeptideId> change) {
-					buildTreeView(controller.getTreeView());
+					controller.buildTreeView();
 				}
 			});
 			analysis.getStatisticsFiles().addListener(new MapChangeListener<Integer, StatisticsFile>() {
 				@Override
 				public void onChanged(MapChangeListener.Change<? extends Integer, ? extends StatisticsFile> change) {
-					buildTreeView(controller.getTreeView());
+					controller.buildTreeView();
 				}
 			});
 			analysis.getFastaFiles().addListener(new MapChangeListener<Integer, FastaFile>() {
 				@Override
 				public void onChanged(MapChangeListener.Change<? extends Integer, ? extends FastaFile> change) {
-					buildTreeView(controller.getTreeView());
+					controller.buildTreeView();
 				}
 			});
 			newAnalysis = true;
@@ -125,7 +121,7 @@ public final class AnalysisHandler {
 				analysisCollection.get(analysisId).removePeptideId(itemId);
 				break;
 			case Statistics:
-				analysisCollection.get(analysisId).removePeptideId(itemId);
+				analysisCollection.get(analysisId).removeStatisticsFile(itemId);
 				break;
 			case Fasta:
 				analysisCollection.get(analysisId).removeFastaFile(itemId);
@@ -149,36 +145,6 @@ public final class AnalysisHandler {
 	
 	public boolean isEmpty() {
 		return analysisCollection.isEmpty();
-	}
-	
-	public void buildTreeView(TreeView<AnalysisTreeObject> treeView) {
-		TreeItem<AnalysisTreeObject> selectedItem = treeView.getSelectionModel().getSelectedItem();
-		TreeItem<AnalysisTreeObject> root = new TreeItem<>();
-		for (Entry<Integer, Analysis> analysis : getAllAnalyses().entrySet()) {
-			TreeItem<AnalysisTreeObject> analysisItem = new TreeItem<>();
-			analysisItem.setValue(new AnalysisTreeObject(analysis.getValue().getName(), analysis.getValue().getId(), -1, AnalysisComponentType.Analysis));
-			for (Entry<Integer, PeptideId> peptideId : analysis.getValue().getPeptideIds().entrySet()) {
-				TreeItem<AnalysisTreeObject> peptideIdItem = new TreeItem<>();
-				peptideIdItem.setValue(new AnalysisTreeObject(peptideId.getValue().toString(), analysis.getValue().getId(), peptideId.getValue().getId(), AnalysisComponentType.PeptideId));
-				analysisItem.getChildren().add(peptideIdItem);
-			}
-			for (Entry<Integer, StatisticsFile> statisticsFile : analysis.getValue().getStatisticsFiles().entrySet()) {
-				TreeItem<AnalysisTreeObject> statisticsFileItem = new TreeItem<>();
-				statisticsFileItem.setValue(new AnalysisTreeObject(statisticsFile.getValue().toString(), analysis.getValue().getId(), statisticsFile.getValue().getId(), AnalysisComponentType.Statistics));
-				analysisItem.getChildren().add(statisticsFileItem);
-			}
-			for (Entry<Integer, FastaFile> fastaFile : analysis.getValue().getFastaFiles().entrySet()) {
-				TreeItem<AnalysisTreeObject> fastaFileItem = new TreeItem<>();
-				fastaFileItem.setValue(new AnalysisTreeObject(fastaFile.getValue().toString(), analysis.getValue().getId(), fastaFile.getValue().getId(), AnalysisComponentType.Fasta));
-				analysisItem.getChildren().add(fastaFileItem);
-			}
-			if (!analysisItem.isLeaf()) {
-				analysisItem.setExpanded(true);
-			}
-			root.getChildren().add(analysisItem);
-		}
-		treeView.setRoot(root);
-		treeView.getSelectionModel().select(selectedItem);
 	}
 	
 	public void setSelectedAnalysisId(int id) {
