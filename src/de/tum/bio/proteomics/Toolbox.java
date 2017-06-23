@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import application.Main;
+import javafx.collections.ObservableMap;
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -27,7 +28,7 @@ public final class Toolbox {
 		return new String[]{"Ala", "Cys", "Asp", "Glu", "Phe", "Gly", "His", "Ile", "Lys", "Leu", "Met", "Asn", "Pro", "Gln", "Arg", "Ser", "Thr", "Val", "Tyr"};
 	}
 	
-	public static void combineSequencesAndProteinGroups(FastaFile fastaFile, Map<Integer, ProteinGroup> proteinGroupsMap, Main mainApp) {
+	public static void combineSequencesAndProteinGroups(FastaFile fastaFile, ObservableMap<Integer, ProteinGroup> proteinGroupsMap, Main mainApp) {
 		if (fastaFile != null && proteinGroupsMap != null) {
 			Task<Void> task = new Task<Void>() {
 				@Override

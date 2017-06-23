@@ -33,9 +33,6 @@ public final class AnalysisHandler {
 	private MainController controller;
 	
 	private IntegerProperty selectedAnalysisId = new SimpleIntegerProperty(-1);
-	private IntegerProperty selectedPeptideIdId = new SimpleIntegerProperty(-1);
-	private IntegerProperty selectedProteinGroupId = new SimpleIntegerProperty(-1);
-	private IntegerProperty selectedPeptideId = new SimpleIntegerProperty(-1);
 	
 	private AnalysisHandler() {
 		// empty
@@ -184,18 +181,6 @@ public final class AnalysisHandler {
 		treeView.getSelectionModel().select(selectedItem);
 	}
 	
-	public void setSelectedPeptideIdId(int id) {
-		this.selectedPeptideIdId.set(id);
-	}
-	
-	public int getSelectedPeptideIdId() {
-		return selectedPeptideIdId.get();
-	}
-	
-	public IntegerProperty selectedPeptideIdIdProperty() {
-		return selectedPeptideIdId;
-	}
-	
 	public void setSelectedAnalysisId(int id) {
 		this.selectedAnalysisId.set(id);
 	}
@@ -206,30 +191,6 @@ public final class AnalysisHandler {
 	
 	public IntegerProperty selectedAnalysisIdProperty() {
 		return selectedAnalysisId;
-	}
-	
-	public void setSelectedProteinGroupId(int id) {
-		this.selectedProteinGroupId.set(id);
-	}
-	
-	public int getSelectedProteinGroupId() {
-		return selectedProteinGroupId.get();
-	}
-	
-	public IntegerProperty selectedProteinGroupIdProperty() {
-		return selectedProteinGroupId;
-	}
-	
-	public void setSelectedPeptideId(int id) {
-		this.selectedPeptideId.set(id);
-	}
-	
-	public int getSelectedPeptideId() {
-		return selectedPeptideId.get();
-	}
-	
-	public IntegerProperty selectedPeptideIdProperty() {
-		return selectedPeptideId;
 	}
 	
 	private int getNextId(Set<Integer> keys) {

@@ -25,6 +25,8 @@ import de.tum.bio.proteomics.StatisticsTableHeaders;
 import de.tum.bio.proteomics.Toolbox;
 import de.tum.bio.sequenceviewer.SequenceViewer;
 import javafx.beans.InvalidationListener;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
@@ -65,6 +67,9 @@ public class MainController {
 	
 	private EnzymeFactory enzymes = EnzymeFactory.getInstance();
 	private InvalidationListener sequenceViewerReadyListener = null;
+	
+	private IntegerProperty shownAnalysisId = new SimpleIntegerProperty(-1);
+	private IntegerProperty shownPeptideIdId = new SimpleIntegerProperty(-1);
 	
 	@FXML
 	MenuItem menuItemOpenMaxQuant;
@@ -139,6 +144,10 @@ public class MainController {
 	                        menuItem.setOnAction(new EventHandler<ActionEvent>() {
 	                            public void handle(ActionEvent e) {
 	                                analysisHandler.removeItem(item.getAnalysisId(), item.getItemId(), item.getAnalysisComponentType());
+	                                if ((item.getAnalysisId() == shownAnalysisId.get() && item.getItemId() == -1) || (item.getAnalysisId() == shownAnalysisId.get() && item.getItemId() == shownPeptideIdId.get())) {
+	                                	tableProteinGroups.setItems(null);
+	                                	tablePeptides.setItems(null);
+	                                }
 	                            }
 	                        });
 	                        contextMenu.getItems().addAll(menuItem);
@@ -249,9 +258,15 @@ public class MainController {
 			if (c.getList().size() == 1) {
 				if (treeView.getSelectionModel().getSelectedItem().getValue().getAnalysisComponentType() == AnalysisComponentType.PeptideId) {
 					analysisHandler.setSelectedAnalysisId(treeView.getSelectionModel().getSelectedItem().getValue().getAnalysisId());
-					analysisHandler.setSelectedPeptideIdId(treeView.getSelectionModel().getSelectedItem().getValue().getItemId());
+					analysisHandler.getAnalysis().setSelectedPeptideIdId(treeView.getSelectionModel().getSelectedItem().getValue().getItemId());
+					shownAnalysisId.set(treeView.getSelectionModel().getSelectedItem().getValue().getAnalysisId());
+					shownPeptideIdId.set(treeView.getSelectionModel().getSelectedItem().getValue().getItemId());
 					PeptideId peptideId = analysisHandler.getAnalysis().getPeptideId();
-					tableProteinGroups.setItems(peptideId.getAllProteinGroupsAsList());
+					if (peptideId != null) {
+						tableProteinGroups.setItems(FXCollections.observableArrayList(peptideId.getAllProteinGroups().values()));
+					} else {
+						tableProteinGroups.setItems(null);
+					}
 					updateVolcanoPlot(peptideId);
 				}
 			}
@@ -262,8 +277,13 @@ public class MainController {
 			ProteinGroup selectedProteinGroup = c.getList().get(0);
 			if (selectedProteinGroup != null) {
 				int proteinGroupId = selectedProteinGroup.getId();
-				tablePeptides.setItems(analysisHandler.getAnalysis().getPeptideId().getPeptidesByProteinGroupsId(proteinGroupId));
-				analysisHandler.setSelectedProteinGroupId(proteinGroupId);
+				PeptideId peptideId = analysisHandler.getAnalysis().getPeptideId();
+				if (peptideId != null) {
+					tablePeptides.setItems(peptideId.getPeptidesByProteinGroupsId(proteinGroupId));
+				} else {
+					tablePeptides.setItems(null);
+				}
+				analysisHandler.getAnalysis().getPeptideId().setSelectedProteinGroupId(proteinGroupId);
 				updateSequenceView();
 			}
 		});
@@ -273,7 +293,7 @@ public class MainController {
 			Peptide selectedPeptide = c.getList().get(0);
 			if (selectedPeptide != null) {
 				int peptideId = selectedPeptide.getId();
-				analysisHandler.setSelectedPeptideId(peptideId);
+				analysisHandler.getAnalysis().getPeptideId().setSelectedPeptideId(peptideId);
 			}
 		});
 	}
@@ -346,7 +366,7 @@ public class MainController {
 				statisticsFile = analysisHandler.getAnalysis(item.getValue().getAnalysisId()).getStatisticsFile(item.getValue().getItemId());
 			}
 		}
-		if (peptideId.getId() == analysisHandler.getSelectedPeptideIdId()) {
+		if (peptideId.getId() == analysisHandler.getAnalysis().getSelectedPeptideIdId()) {
 			peptideId.statisticsAddedProperty().addListener((c, o, n) -> {
 				updateVolcanoPlot(null);
 			});
@@ -408,10 +428,13 @@ public class MainController {
 				sequenceViewParent.getChildren().add(sequenceViewer);
 			};
 		}
-		sequenceViewer = new SequenceViewer(mainApp.getStage(), analysisHandler.getAnalysis().getPeptideId(), analysisHandler.getSelectedProteinGroupId(), sequenceViewParent.heightProperty());
-		progressBar.progressProperty().bind(sequenceViewer.progressProperty());
-		statusLabel.textProperty().bind(sequenceViewer.statusProperty());
-		sequenceViewer.readyProperty().addListener(sequenceViewerReadyListener);
+		
+		if (analysisHandler.getAnalysis().getPeptideId() != null) {
+			sequenceViewer = new SequenceViewer(mainApp.getStage(), analysisHandler.getAnalysis().getPeptideId(), analysisHandler.getAnalysis().getPeptideId().getSelectedProteinGroupId(), sequenceViewParent.heightProperty());
+			progressBar.progressProperty().bind(sequenceViewer.progressProperty());
+			statusLabel.textProperty().bind(sequenceViewer.statusProperty());
+			sequenceViewer.readyProperty().addListener(sequenceViewerReadyListener);
+		}
 	}
 	
 	public void sequenceViewDigest() {

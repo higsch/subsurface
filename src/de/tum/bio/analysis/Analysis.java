@@ -7,7 +7,9 @@ import de.tum.bio.proteomics.FastaFile;
 import de.tum.bio.proteomics.PeptideId;
 import de.tum.bio.proteomics.StatisticsFile;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 
@@ -16,13 +18,13 @@ public class Analysis implements AnalysisComponent {
 	private int id;
 	private String name;
 	
-	private AnalysisHandler analysisHandler = AnalysisHandler.getInstance();
-	
 	private ObservableMap<Integer, PeptideId> peptideIdentifications = FXCollections.observableMap(new HashMap<Integer, PeptideId>());
 	private ObservableMap<Integer, StatisticsFile> statisticsFiles = FXCollections.observableMap(new HashMap<Integer, StatisticsFile>());
 	private ObservableMap<Integer, FastaFile> fastaFiles = FXCollections.observableMap(new HashMap<Integer, FastaFile>());
 	
 	private BooleanProperty dataAssignedProperty = new SimpleBooleanProperty(false);
+	
+	private IntegerProperty selectedPeptideIdId = new SimpleIntegerProperty(-1);
 	
 	public Analysis(int id) {
 		this.id = id;
@@ -91,7 +93,7 @@ public class Analysis implements AnalysisComponent {
 	}
 	
 	public PeptideId getPeptideId() {
-		return peptideIdentifications.get(analysisHandler.getSelectedPeptideIdId()); // TODO: do not access AnalysisHandler class
+		return peptideIdentifications.get(getSelectedPeptideIdId());
 	}
 	
 	public ObservableMap<Integer, StatisticsFile> getStatisticsFiles() {
@@ -125,6 +127,18 @@ public class Analysis implements AnalysisComponent {
 	
 	public BooleanProperty dataAssignedProperty() {
 		return dataAssignedProperty;
+	}
+	
+	public void setSelectedPeptideIdId(int id) {
+		this.selectedPeptideIdId.set(id);
+	}
+	
+	public int getSelectedPeptideIdId() {
+		return selectedPeptideIdId.get();
+	}
+	
+	public IntegerProperty selectedPeptideIdIdProperty() {
+		return selectedPeptideIdId;
 	}
 	
 	private int getNextId(Set<Integer> keys) {

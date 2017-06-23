@@ -12,7 +12,9 @@ import com.compomics.util.experiment.biology.Enzyme;
 import de.tum.bio.analysis.AnalysisComponent;
 import de.tum.bio.analysis.AnalysisComponentType;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
@@ -24,6 +26,9 @@ public class PeptideId implements AnalysisComponent {
 	
 	private BooleanProperty sequencesAdded = new SimpleBooleanProperty(false);
 	private BooleanProperty statisticsAdded = new SimpleBooleanProperty(false);
+	
+	private IntegerProperty selectedProteinGroupId = new SimpleIntegerProperty(-1);
+	private IntegerProperty selectedPeptideId = new SimpleIntegerProperty(-1);
 	
 	private ObservableMap<Integer, ProteinGroup> proteins = FXCollections.observableHashMap();
 	private ObservableMap<Integer, Peptide> peptides = FXCollections.observableHashMap();
@@ -113,6 +118,30 @@ public class PeptideId implements AnalysisComponent {
 	
 	public BooleanProperty statisticsAddedProperty() {
 		return statisticsAdded;
+	}
+	
+	public void setSelectedProteinGroupId(int id) {
+		this.selectedProteinGroupId.set(id);
+	}
+	
+	public int getSelectedProteinGroupId() {
+		return selectedProteinGroupId.get();
+	}
+	
+	public IntegerProperty selectedProteinGroupIdProperty() {
+		return selectedProteinGroupId;
+	}
+	
+	public void setSelectedPeptideId(int id) {
+		this.selectedPeptideId.set(id);
+	}
+	
+	public int getSelectedPeptideId() {
+		return selectedPeptideId.get();
+	}
+	
+	public IntegerProperty selectedPeptideIdProperty() {
+		return selectedPeptideId;
 	}
 	
 	public Map<Integer, Map<StatisticsTableHeaders, Number>> getStatisticsData() {
