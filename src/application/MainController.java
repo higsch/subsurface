@@ -85,6 +85,8 @@ public class MainController {
 	MenuItem menuItemOpenPerseus;
 	@FXML
 	MenuItem menuItemOpenFasta;
+	@FXML
+	MenuItem menuItemOpenMzIdentML;
 	
 	@FXML
 	Button buttonOpenMaxQuant;
@@ -92,6 +94,8 @@ public class MainController {
 	Button buttonOpenPerseus;
 	@FXML
 	Button buttonOpenFasta;
+	@FXML
+	Button buttonOpenMzIdentML;
 	@FXML
 	Button buttonCombineSequences;
 	@FXML
@@ -355,6 +359,9 @@ public class MainController {
 		if (event.getSource().equals(buttonOpenFasta) || event.getSource().equals(menuItemOpenFasta)) {
 			analysisHandler.addItem(id, AnalysisComponentType.Fasta, mainApp);
 		}
+		if (event.getSource().equals(buttonOpenMzIdentML) || event.getSource().equals(menuItemOpenMzIdentML)) {
+			analysisHandler.addItem(id, AnalysisComponentType.MzIdentML, mainApp);
+		} 
 	}
 	
 	public void handleCombineSequencesAndProteinGroups(ActionEvent event) {
@@ -415,6 +422,7 @@ public class MainController {
 			dataPoint.setNode(node);
 			series.getData().add(dataPoint);
 		}
+		
 		volcanoPlot.getData().add(series);
 	}
 	
@@ -505,7 +513,7 @@ public class MainController {
 	private void clearSurface() {
 		tableProteinGroups.setItems(null);
     	tablePeptides.setItems(null);
-    	volcanoPlot.setData(null);
+    	volcanoPlot.getData().clear();
     	sequenceViewParent.getChildren().clear();
 	}
 }

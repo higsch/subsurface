@@ -130,7 +130,7 @@ public abstract class MQTablesIO {
 			put(ModificationsTableHeaders.SCORE_FOR_LOCALIZATION, "Score for localization");
 			put(ModificationsTableHeaders.POSITION_IN_PEPTIDE, "Position in peptide");
 			put(ModificationsTableHeaders.PEPTIDE_IDS, "Peptide IDs");
-			put(ModificationsTableHeaders.SEQUENCE_WINDOW, "Probabilities");
+			put(ModificationsTableHeaders.SEQUENCE_WINDOW, "Probabilities"); // TODO: is this correct?
 		}};
 	protected static BiMap<ModificationsTableHeaders, String> ModificationsHeadersMap;
 	

@@ -52,11 +52,6 @@
                   </ScrollPane>
                </content>
             </Tab>
-            <Tab closable="false" text="Correlation matrix">
-               <content>
-                  <VBox fx:id="vBoxCorrelationMatrix" prefHeight="200.0" prefWidth="100.0" />
-               </content>
-            </Tab>
             <Tab closable="false" text="Ranked correlations">
                <content>
                   <ScrollPane fitToWidth="true">

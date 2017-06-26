@@ -36,6 +36,7 @@
                           <items>
                             <MenuItem fx:id="menuItemOpenMaxQuant" mnemonicParsing="false" onAction="#handleOpenAnalysisComponent" text="MaxQuant analysis" />
                               <MenuItem fx:id="menuItemOpenPerseus" mnemonicParsing="false" onAction="#handleOpenAnalysisComponent" text="Perseus analysis" />
+                              <MenuItem fx:id="menuItemOpenMzIdentML" mnemonicParsing="false" onAction="#handleOpenAnalysisComponent" text="mzIdentML" />
                           </items>
                         </Menu>
                         <MenuItem fx:id="menuItemOpenFasta" mnemonicParsing="false" onAction="#handleOpenAnalysisComponent" text="Open fasta file" />
@@ -139,6 +140,25 @@
                      </graphic>
                   </Button>
                   <Region minWidth="20.0" HBox.hgrow="NEVER" />
+                  <Button fx:id="buttonOpenMzIdentML" maxHeight="47.0" minHeight="47.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleOpenAnalysisComponent" styleClass="first-and-last">
+                     <graphic>
+                        <VBox alignment="CENTER">
+                           <children>
+                              <Label text="%fa.folder_open" textFill="#3070b3">
+                                 <font>
+                                    <Font name="FontAwesome" size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label text="mzIdentML">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                     </graphic>
+                  </Button>
+                  <Region minWidth="20.0" />
                   <Button fx:id="buttonCombineSequences" disable="true" maxHeight="47.0" minHeight="47.0" minWidth="80.0" mnemonicParsing="false" onAction="#handleCombineSequencesAndProteinGroups" styleClass="first-and-last" HBox.hgrow="NEVER">
                      <graphic>
                         <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">

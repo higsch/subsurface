@@ -102,6 +102,9 @@ public final class AnalysisHandler {
 				case Fasta:
 					AnalysisComponentOpener.getFastaCollection(mainApp, analysis);
 					break;
+				case MzIdentML:
+					AnalysisComponentOpener.getMzIdentMLCollection(mainApp, analysis);
+					break;
 				default:
 					break;
 			}

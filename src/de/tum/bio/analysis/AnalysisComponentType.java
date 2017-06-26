@@ -7,6 +7,7 @@ public enum AnalysisComponentType {
 	MaxQuant_Peptides,
 	MaxQuant_Evidence,
 	Perseus,
+	MzIdentML,
 	Fasta,
 	PeptideId,
 	Statistics;

@@ -167,6 +167,46 @@ public final class AnalysisComponentOpener {
 		}
 	}
 	
+	public static void getMzIdentMLCollection(Main mainApp, Analysis analysis) {
+		String filePath = getFile(mainApp.getStage());
+		if (filePath != null) {
+			Task<PeptideId> readTask = new Task<PeptideId>() {
+				@Override
+				protected PeptideId call() throws Exception {
+					PeptideId peptideId = null;
+					
+					return peptideId;
+				}
+				
+				@Override
+				protected void failed() {
+					super.failed();
+					updateMessage("Cancelled.");
+					updateProgress(0.0, 1.0);
+				}
+			};
+			readTask.setOnSucceeded(workerStateEvent -> {
+				analysis.addPeptideId(readTask.getValue());
+				analysis.setDataAssigned(true);
+	        });
+			readTask.setOnFailed(workerStateEvent -> {
+				Alert alert = new Alert(AlertType.ERROR, "An error occured while loading files.\n" + workerStateEvent.getEventType().toString(), ButtonType.OK);
+				alert.showAndWait();
+			});
+			readTask.exceptionProperty().addListener((observable, oldValue, newValue) ->  {
+				if(newValue != null) {
+					Exception e = (Exception) newValue;
+				    e.printStackTrace();
+				}
+			});
+			mainApp.getProgressBar().progressProperty().bind(readTask.progressProperty());
+			mainApp.getStatusLabel().textProperty().bind(readTask.messageProperty());
+			
+			Thread t = new Thread(readTask);
+			t.start();
+		}
+	}
+	
 	public static void getFastaCollection(Main mainApp, Analysis analysis) {
 		String filePath = getFile(mainApp.getStage());
 		if (filePath != null) {
@@ -174,18 +214,16 @@ public final class AnalysisComponentOpener {
 				@Override
 				public FastaFile call() throws IOException {
 					FastaFile fastaFile = null;
-					if (filePath != null) {
-						try {
-							FastaFileReader fastaFileReader = new FastaFileReader();
-							fastaFileReader.getProgressProperty().addListener((obs, oldProgress, newProgress) -> updateProgress((double) newProgress, 1.0));
-							//fastaFileReader.getProgressProperty().addListener((obs, oldProgress, newProgress) -> System.out.println(newProgress));
-							fastaFileReader.getStatusProperty().addListener((obs, oldStatus, newStatus) -> updateMessage(newStatus));
-							// Todo: Select database type
-							fastaFile = fastaFileReader.read(filePath, null);
-						} catch (IOException e) {
-							Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
-							alert.showAndWait();
-						}
+					try {
+						FastaFileReader fastaFileReader = new FastaFileReader();
+						fastaFileReader.getProgressProperty().addListener((obs, oldProgress, newProgress) -> updateProgress((double) newProgress, 1.0));
+						//fastaFileReader.getProgressProperty().addListener((obs, oldProgress, newProgress) -> System.out.println(newProgress));
+						fastaFileReader.getStatusProperty().addListener((obs, oldStatus, newStatus) -> updateMessage(newStatus));
+						// Todo: Select database type
+						fastaFile = fastaFileReader.read(filePath, null);
+					} catch (IOException e) {
+						Alert alert = new Alert(AlertType.ERROR, e.getMessage(), ButtonType.OK);
+						alert.showAndWait();
 					}
 					updateMessage("");
 					return fastaFile;
