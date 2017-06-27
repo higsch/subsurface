@@ -17,7 +17,7 @@ import javafx.beans.property.StringProperty;
 
 public class ProteinGroup extends AminoAcidSequence implements AnalysisComponent {
 	
-	private int id;
+	private String id;
 	private StringProperty databaseIds = new SimpleStringProperty();
 	private StringProperty names = new SimpleStringProperty();
 	private StringProperty geneNames = new SimpleStringProperty();
@@ -26,27 +26,26 @@ public class ProteinGroup extends AminoAcidSequence implements AnalysisComponent
 	private DoubleProperty log2Enrichment = new SimpleDoubleProperty(Double.NaN);
 	private DoubleProperty minusLog10PValue = new SimpleDoubleProperty(Double.NaN);
 	
-	public ProteinGroup(int id) {
+	public ProteinGroup(String id) {
 		super();
 		this.id = id;
 	}
 	
-	public ProteinGroup(int id, String sequence) {
+	public ProteinGroup(String id, String sequence) {
 		super(sequence);
 		this.id = id;
 	}
 	
 	public ProteinGroup(Map<ProteinGroupsTableHeaders, String> properties) {
 		super();
-		this.id = Integer.parseInt(properties.get(ProteinGroupsTableHeaders.ID));
+		this.id = properties.get(ProteinGroupsTableHeaders.ID);
 		setDatabaseIds(properties.get(ProteinGroupsTableHeaders.DATABASE_ID));
 		setNames(properties.get(ProteinGroupsTableHeaders.NAMES));
 		setGeneNames(properties.get(ProteinGroupsTableHeaders.GENE_NAMES));
 		setSequenceCoverage(Double.parseDouble(properties.get(ProteinGroupsTableHeaders.SEQUENCE_COVERAGE)));
 	}
-	
-	@Override
-	public int getId() {
+
+	public String getId() {
 		return id;
 	}
 	

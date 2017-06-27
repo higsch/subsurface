@@ -13,7 +13,7 @@ import javafx.scene.layout.StackPane;
 
 public class VolcanoPlotDot extends StackPane {
 	
-	private int id;
+	private String id;
 	@SuppressWarnings("unused")
 	private MainController controller;
 	private Label label = new Label();
@@ -63,7 +63,7 @@ public class VolcanoPlotDot extends StackPane {
 	    });
 	}
 	
-	public int getProteinGroupsId() {
+	public String getProteinGroupsId() {
 		return id;
 	}
 	

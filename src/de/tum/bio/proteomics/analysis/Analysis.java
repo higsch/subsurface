@@ -28,7 +28,7 @@ public class Analysis implements AnalysisComponent {
 	
 	public Analysis(int id) {
 		this.id = id;
-		this.name = "Analysis_" + Integer.toString(id);
+		this.name = "Analysis_" + id;
 	}
 	
 	public Analysis(int id, String name) {

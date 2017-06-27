@@ -34,7 +34,7 @@ public class MQEvidenceMatcher extends MQTablesIO {
 
 	@SuppressWarnings("unchecked")
 	public <E extends Enum<E> & TableHeaders> void match(PeptideId peptideId, String txtDirectory, Map<E, String> headerMap) throws IOException {
-		Map<Integer, Peptide> peptides = peptideId.getAllPeptides();
+		Map<String, Peptide> peptides = peptideId.getAllPeptides();
 		
 		if (headerMap == null) {
 			headerMap = (Map<E, String>) initStandardHeaders();

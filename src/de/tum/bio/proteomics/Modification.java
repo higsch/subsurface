@@ -14,7 +14,7 @@ import de.tum.bio.proteomics.headers.ModificationsTableHeaders;
  */
 
 public class Modification implements AnalysisComponent {
-	private int id;
+	private String id;
 	private String name;
 	private double localizationProbability;
 	private double scoreDiff;
@@ -30,7 +30,7 @@ public class Modification implements AnalysisComponent {
 	
 	
 	public Modification(String name, Map<ModificationsTableHeaders, String> properties) {
-		this.id = Integer.parseInt(properties.get(ModificationsTableHeaders.ID));
+		this.id = properties.get(ModificationsTableHeaders.ID);
 		this.name = name;
 		this.localizationProbability = Double.parseDouble(properties.get(ModificationsTableHeaders.LOCALIZATION_PROBABILITY));
 		this.scoreDiff = Double.parseDouble(properties.get(ModificationsTableHeaders.SCORE_DIFF));
@@ -98,8 +98,7 @@ public class Modification implements AnalysisComponent {
 		return sequenceWindow;
 	}
 
-	@Override
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 }

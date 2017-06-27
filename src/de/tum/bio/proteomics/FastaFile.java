@@ -35,7 +35,6 @@ public class FastaFile implements AnalysisComponent {
 		this.name = "Fasta: " + name;
 	}
 
-	@Override
 	public int getId() {
 		return id;
 	}

@@ -7,7 +7,7 @@ import de.tum.bio.proteomics.headers.EvidenceTableHeaders;
 
 public class Feature implements AnalysisComponent {
 	
-	private int id;
+	private String id;
 	private long intensity = 0;
 	private String experiment;
 	private int numberOfDataPoints = 0;
@@ -16,7 +16,7 @@ public class Feature implements AnalysisComponent {
 	
 
 	public Feature(Map<EvidenceTableHeaders, String> evidences) {
-		id = Integer.parseInt(evidences.get(EvidenceTableHeaders.ID));
+		id = evidences.get(EvidenceTableHeaders.ID);
 		if (evidences.get(EvidenceTableHeaders.INTENSITY).length() > 0) {
 			intensity = Long.parseLong(evidences.get(EvidenceTableHeaders.INTENSITY));
 		}
@@ -32,8 +32,7 @@ public class Feature implements AnalysisComponent {
 		}
 	}
 
-	@Override
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 	

@@ -70,13 +70,13 @@ public class SequenceViewer extends BorderPane {
 	private VBox experimentIntensities = null;
 	
 	private PeptideId peptideId;
-	private int proteinGroupId;
+	private String proteinGroupId;
 	
 	private String proteinSequence;
 	/*
 	 * Holds the peptide Ids for each amino acid position of the protein.
 	 */
-	private Map<Integer, List<Integer>> peptideMap;
+	private Map<Integer, List<String>> peptideMap;
 	
 	/*
 	 * Holds the intensities for each amino acid position and specific experiment.
@@ -87,12 +87,12 @@ public class SequenceViewer extends BorderPane {
 	private StringProperty statusProperty = new SimpleStringProperty();
 	private BooleanProperty readyProperty = new SimpleBooleanProperty(false);
 	
-	public SequenceViewer(Stage owner, PeptideId peptideId, int proteinGroupId, ReadOnlyDoubleProperty parentHightProperty) {
+	public SequenceViewer(Stage owner, PeptideId peptideId, String id, ReadOnlyDoubleProperty parentHightProperty) {
 		this.owner = owner;
 		setPeptideId(peptideId);
-		setProteinGroupId(proteinGroupId);
+		setProteinGroupId(id);
 		this.parentHightProperty = parentHightProperty;
-		proteinSequence = peptideId.getProteinGroupById(proteinGroupId).getSequenceAsString();
+		proteinSequence = peptideId.getProteinGroupById(id).getSequenceAsString();
 		
 		init();
 	}
@@ -138,7 +138,7 @@ public class SequenceViewer extends BorderPane {
 	private void initPeptideMap() {
 		peptideMap = new HashMap<>();
 		for (int i = 1; i <= proteinSequence.length(); i++) {
-			peptideMap.put(i, new ArrayList<Integer>(0));
+			peptideMap.put(i, new ArrayList<String>(0));
 		}
 	}
 
@@ -356,9 +356,9 @@ public class SequenceViewer extends BorderPane {
 		long maxIntensity = 0;
 		long minIntensity = 0;
 		boolean firstEntry = true;
-		for (Entry<Integer, List<Integer>> idList : peptideMap.entrySet()) {
+		for (Entry<Integer, List<String>> idList : peptideMap.entrySet()) {
 			long totalIntensity = 0;
-			for (Integer id : idList.getValue()) {
+			for (String id : idList.getValue()) {
 				totalIntensity += peptideId.getPeptideById(id).getTotalIntensity();
 			}
 			totalIntensityMap.put(idList.getKey(), totalIntensity);
@@ -387,13 +387,13 @@ public class SequenceViewer extends BorderPane {
 		
 		// Compile experimentIntensityMap
 		long maxIntensity = 0;
-		for (Entry<Integer, List<Integer>> idList : peptideMap.entrySet()) {
+		for (Entry<Integer, List<String>> idList : peptideMap.entrySet()) {
 			// for each position
 			Map<String, Long> tmpExperimentIntensity = new HashMap<>();
 			for (String experimentName : peptideId.getSummary().getExperimentNames()) {
 				tmpExperimentIntensity.put(experimentName, (long) 0);
 			}
-			for (Integer id : idList.getValue()) {
+			for (String id : idList.getValue()) {
 				for (Entry<String, Long> entry : peptideId.getPeptideById(id).getExperimentIntensities().entrySet()) {
 					if (tmpExperimentIntensity.containsKey(entry.getKey())) {
 						tmpExperimentIntensity.put(entry.getKey(), entry.getValue() + tmpExperimentIntensity.get(entry.getKey()));
@@ -472,11 +472,11 @@ public class SequenceViewer extends BorderPane {
 		return peptideId;
 	}
 	
-	public void setProteinGroupId(int proteinGroupId) {
-		this.proteinGroupId = proteinGroupId;
+	public void setProteinGroupId(String id) {
+		this.proteinGroupId = id;
 	}
 	
-	public int getProteinGroupId() {
+	public String getProteinGroupId() {
 		return proteinGroupId;
 	}
 

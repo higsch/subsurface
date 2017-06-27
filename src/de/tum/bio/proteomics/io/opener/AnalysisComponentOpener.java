@@ -18,6 +18,7 @@ import de.tum.bio.proteomics.analysis.AnalysisComponentType;
 import de.tum.bio.proteomics.analysis.gui.headerassigner.StatisticsFileHeaderAssigner;
 import de.tum.bio.proteomics.headers.StatisticsTableHeaders;
 import de.tum.bio.proteomics.io.fasta.FastaFileReader;
+import de.tum.bio.proteomics.io.psi.MzIdentMLReader;
 import de.tum.bio.proteomics.io.searchengine.maxquant.MQEvidenceMatcher;
 import de.tum.bio.proteomics.io.searchengine.maxquant.MQModificationsReader;
 import de.tum.bio.proteomics.io.searchengine.maxquant.MQPeptidesReader;
@@ -175,7 +176,8 @@ public final class AnalysisComponentOpener {
 				@Override
 				protected PeptideId call() throws Exception {
 					PeptideId peptideId = null;
-					
+					MzIdentMLReader mzMLReader = new MzIdentMLReader();
+					peptideId = mzMLReader.read(filePath);
 					return peptideId;
 				}
 				

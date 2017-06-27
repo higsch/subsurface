@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="229.0" prefWidth="446.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.tum.bio.analysis.gui.StatisticsFileHeaderAssignerController">
+<BorderPane prefHeight="229.0" prefWidth="446.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.tum.bio.proteomics.analysis.gui.headerassigner.StatisticsFileHeaderAssignerController">
    <top>
       <Label text="Please assign the table headers to field names." BorderPane.alignment="CENTER_LEFT">
          <BorderPane.margin>

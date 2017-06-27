@@ -61,9 +61,8 @@ public class AnalysisSummary implements AnalysisComponent {
 		return variableModifications;
 	}
 
-	@Override
-	public int getId() {
-		return -1;
+	public String getId() {
+		return null;
 	}
 
 }

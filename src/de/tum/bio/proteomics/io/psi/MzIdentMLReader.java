@@ -4,8 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import de.tum.bio.proteomics.PeptideId;
+import de.tum.bio.proteomics.analysis.AnalysisComponent;
+import de.tum.bio.proteomics.analysis.AnalysisComponentType;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
@@ -29,11 +34,21 @@ public class MzIdentMLReader {
 		return Files.exists(Paths.get(filePath));
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public PeptideId read(String filePath) throws IOException {
 		PeptideId peptideId = null;
+		Map<AnalysisComponentType, List<AnalysisComponent>> tMap = new HashMap<>();
 		
 		File inputFile = new File(filePath);
 		mzIdentMlController = new MzIdentMLControllerImpl(inputFile, true);
+		for (Comparable protein : mzIdentMlController.getProteinIds()) {
+			
+		}
+		
+
+		
+		
+		
 		mzIdentMlController.close();
 		return peptideId;
 	}

@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -19,6 +20,9 @@ public class StatisticsFileHeaderAssignerController {
 	private ChoiceBox<String> choiceEnrichment;
 	@FXML
 	private ChoiceBox<String> choicePValue;
+	
+	@FXML
+	private HBox buttonBox;
 	
 	@FXML
 	private Button buttonOK;

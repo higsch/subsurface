@@ -32,16 +32,16 @@ public final class Toolbox {
 		return new String[]{"Ala", "Cys", "Asp", "Glu", "Phe", "Gly", "His", "Ile", "Lys", "Leu", "Met", "Asn", "Pro", "Gln", "Arg", "Ser", "Thr", "Val", "Tyr"};
 	}
 	
-	public static void combineSequencesAndProteinGroups(FastaFile fastaFile, ObservableMap<Integer, ProteinGroup> proteinGroupsMap, Main mainApp) {
-		if (fastaFile != null && proteinGroupsMap != null) {
+	public static void combineSequencesAndProteinGroups(FastaFile fastaFile, ObservableMap<String, ProteinGroup> observableMap, Main mainApp) {
+		if (fastaFile != null && observableMap != null) {
 			Task<Void> task = new Task<Void>() {
 				@Override
 				protected Void call() throws Exception {
-					long numberOfProteinGroups = proteinGroupsMap.size();
+					long numberOfProteinGroups = observableMap.size();
 					long index = 0;
 					updateMessage("Combining information...");
 					// Go through each protein
-					for (ProteinGroup proteinGroup : proteinGroupsMap.values()) {
+					for (ProteinGroup proteinGroup : observableMap.values()) {
 						updateProgress(index, numberOfProteinGroups);
 						String leadingDatabaseIdList = proteinGroup.getDatabaseIds().split(";")[0];
 						String sequence = fastaFile.getSequenceById(leadingDatabaseIdList);
@@ -85,7 +85,7 @@ public final class Toolbox {
 	}
 	
 	public static void combineStatisticsAndProteinGroups(StatisticsFile statisticsFile, PeptideId peptideId, Main mainApp) {
-		Map<Integer, ProteinGroup> proteinGroupsMap = peptideId.getAllProteinGroups();
+		Map<String, ProteinGroup> proteinGroupsMap = peptideId.getAllProteinGroups();
 		if (statisticsFile != null && proteinGroupsMap != null) {
 			Task<Void> task = new Task<Void>() {
 				@Override
@@ -95,7 +95,7 @@ public final class Toolbox {
 					String id = null;
 					updateMessage("Combining information...");
 					// Go through each protein
-					for (Entry<Integer, ProteinGroup> proteinGroup : proteinGroupsMap.entrySet()) {
+					for (Entry<String, ProteinGroup> proteinGroup : proteinGroupsMap.entrySet()) {
 						updateProgress(index, numberOfProteinGroups);
 						updateMessage(proteinGroup.getValue().getNames());
 						id = proteinGroup.getValue().getDatabaseIds();

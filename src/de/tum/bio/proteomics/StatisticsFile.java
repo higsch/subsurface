@@ -27,7 +27,6 @@ public class StatisticsFile implements AnalysisComponent {
 		this.name = "Statistics: " + name;
 	}
 	
-	@Override
 	public int getId() {
 		return id;
 	}

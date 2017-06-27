@@ -19,7 +19,7 @@ import javafx.beans.property.SimpleLongProperty;
 
 public class Peptide extends AminoAcidSequence implements AnalysisComponent {
 
-	private int id;
+	private String id;
 	private IntegerProperty startPosition = new SimpleIntegerProperty();
 	private IntegerProperty endPosition = new SimpleIntegerProperty();
 	private IntegerProperty msmsCount = new SimpleIntegerProperty();
@@ -36,7 +36,7 @@ public class Peptide extends AminoAcidSequence implements AnalysisComponent {
 	private long maxExperimentIntensity;
 	private long minExperimentIntensity;
 	
-	public Peptide(int id, String sequence, int startPosition, int endPosition, int msmsCount) {
+	public Peptide(String id, String sequence, int startPosition, int endPosition, int msmsCount) {
 		super(sequence);
 		this.id = id;
 		setStartPosition(startPosition);
@@ -46,7 +46,7 @@ public class Peptide extends AminoAcidSequence implements AnalysisComponent {
 	
 	public Peptide(Map<PeptidesTableHeaders, String> properties) {
 		super(properties.get(PeptidesTableHeaders.SEQUENCE));
-		id = Integer.parseInt(properties.get(PeptidesTableHeaders.ID));
+		id = properties.get(PeptidesTableHeaders.ID);
 		if (properties.get(PeptidesTableHeaders.START_POSITION).length() > 0) {
 			setStartPosition(Integer.parseInt(properties.get(PeptidesTableHeaders.START_POSITION)));
 		}
@@ -63,8 +63,7 @@ public class Peptide extends AminoAcidSequence implements AnalysisComponent {
 		}
 	}
 	
-	@Override
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 	

@@ -296,7 +296,7 @@ public class MainController {
 		tableProteinGroups.getSelectionModel().getSelectedItems().addListener((ListChangeListener<ProteinGroup>) c -> {
 			ProteinGroup selectedProteinGroup = c.getList().get(0);
 			if (selectedProteinGroup != null) {
-				int proteinGroupId = selectedProteinGroup.getId();
+				String proteinGroupId = selectedProteinGroup.getId();
 				PeptideId peptideId = analysisHandler.getAnalysis().getPeptideId();
 				if (peptideId != null) {
 					tablePeptides.setItems(peptideId.getPeptidesByProteinGroupsId(proteinGroupId));
@@ -312,7 +312,7 @@ public class MainController {
 		tablePeptides.getSelectionModel().getSelectedItems().addListener((ListChangeListener<Peptide>) c -> {
 			Peptide selectedPeptide = c.getList().get(0);
 			if (selectedPeptide != null) {
-				int peptideId = selectedPeptide.getId();
+				String peptideId = selectedPeptide.getId();
 				analysisHandler.getAnalysis().getPeptideId().setSelectedPeptideId(peptideId);
 			}
 		});
@@ -416,7 +416,7 @@ public class MainController {
 		}
 		
 		XYChart.Series<Number, Number> series = new XYChart.Series<>();
-		for (Entry<Integer, Map<StatisticsTableHeaders, Number>> entry : peptideId.getStatisticsData().entrySet()) {
+		for (Entry<String, Map<StatisticsTableHeaders, Number>> entry : peptideId.getStatisticsData().entrySet()) {
 			XYChart.Data<Number, Number> dataPoint = new XYChart.Data<Number, Number>(entry.getValue().get(StatisticsTableHeaders.LOG2_ENRICHMENT), entry.getValue().get(StatisticsTableHeaders.MINUS_LOG10_PVALUE));
 			VolcanoPlotDot node = new VolcanoPlotDot((ProteinGroupsTableHeaders.GENE_NAMES), peptideId.getProteinGroupById(entry.getKey()), this);
 			node.selectedProperty().bind(tableProteinGroups.getSelectionModel().selectedItemProperty().isEqualTo(peptideId.getProteinGroupById(entry.getKey())));

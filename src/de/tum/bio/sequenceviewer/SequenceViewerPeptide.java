@@ -133,7 +133,7 @@ public class SequenceViewerPeptide extends StackPane {
 		return sequenceString.length();
 	}
 	
-	public int getPeptideId() {
+	public String getPeptideId() {
 		return peptide.getId();
 	}
 }
