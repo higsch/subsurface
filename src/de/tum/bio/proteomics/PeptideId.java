@@ -9,8 +9,10 @@ import java.util.Map.Entry;
 
 import com.compomics.util.experiment.biology.Enzyme;
 
-import de.tum.bio.analysis.AnalysisComponent;
-import de.tum.bio.analysis.AnalysisComponentType;
+import de.tum.bio.proteomics.analysis.AnalysisComponent;
+import de.tum.bio.proteomics.analysis.AnalysisComponentType;
+import de.tum.bio.proteomics.headers.StatisticsTableHeaders;
+import de.tum.bio.proteomics.tools.Toolbox;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;

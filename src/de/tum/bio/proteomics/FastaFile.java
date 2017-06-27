@@ -2,8 +2,8 @@ package de.tum.bio.proteomics;
 
 import java.util.Map;
 
-import de.tum.bio.analysis.AnalysisComponent;
-import de.tum.bio.proteomics.FastaFileReader.DatabaseType;
+import de.tum.bio.proteomics.analysis.AnalysisComponent;
+import de.tum.bio.proteomics.io.FastaFileReader.DatabaseType;
 
 /**
  * This class represents a parsed fasta file.

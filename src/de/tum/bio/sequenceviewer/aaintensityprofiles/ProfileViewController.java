@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.controlsfx.control.CheckListView;
 
-import de.tum.bio.proteomics.Toolbox;
+import de.tum.bio.proteomics.tools.Toolbox;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.chart.CategoryAxis;

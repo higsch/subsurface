@@ -4,7 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import de.tum.bio.analysis.AnalysisComponent;
+import de.tum.bio.proteomics.analysis.AnalysisComponent;
+import de.tum.bio.proteomics.headers.ModificationsTableHeaders;
 
 /**
  * This class represents an amino acid modification.

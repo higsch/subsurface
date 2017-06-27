@@ -3,8 +3,8 @@ package application;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import de.tum.bio.analysis.AnalysisHandler;
 import de.tum.bio.proteomics.ProteinGroup;
+import de.tum.bio.proteomics.analysis.AnalysisHandler;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

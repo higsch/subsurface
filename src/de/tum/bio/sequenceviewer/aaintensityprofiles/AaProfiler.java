@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.tum.bio.proteomics.ProteinGroup;
-import de.tum.bio.proteomics.Toolbox;
+import de.tum.bio.proteomics.tools.Toolbox;
 import de.tum.bio.utils.AlphanumComparator;
 import de.tum.bio.utils.Correlator;
 import javafx.beans.property.BooleanProperty;

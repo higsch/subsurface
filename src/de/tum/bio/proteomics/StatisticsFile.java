@@ -2,7 +2,8 @@ package de.tum.bio.proteomics;
 
 import java.util.Map;
 
-import de.tum.bio.analysis.AnalysisComponent;
+import de.tum.bio.proteomics.analysis.AnalysisComponent;
+import de.tum.bio.proteomics.headers.StatisticsTableHeaders;
 
 /**
  * This interface represents a statistics file.
