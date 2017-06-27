@@ -8,7 +8,7 @@ import application.MainController;
 import de.tum.bio.proteomics.FastaFile;
 import de.tum.bio.proteomics.PeptideId;
 import de.tum.bio.proteomics.StatisticsFile;
-import de.tum.bio.proteomics.analysis.gui.AnalysisComponentOpener;
+import de.tum.bio.proteomics.io.opener.AnalysisComponentOpener;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;

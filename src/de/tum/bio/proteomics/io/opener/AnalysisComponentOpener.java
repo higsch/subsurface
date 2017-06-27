@@ -1,4 +1,4 @@
-package de.tum.bio.proteomics.analysis.gui;
+package de.tum.bio.proteomics.io.opener;
 
 import java.io.File;
 import java.io.IOException;
