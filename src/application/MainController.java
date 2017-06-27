@@ -12,6 +12,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 
+import application.about.AboutDialog;
 import de.tum.bio.proteomics.FastaFile;
 import de.tum.bio.proteomics.Peptide;
 import de.tum.bio.proteomics.PeptideId;
@@ -318,6 +319,10 @@ public class MainController {
 		});
 	}
 	
+	public Main getMainApp() {
+		return mainApp;
+	}
+	
 	public TreeView<AnalysisTreeObject> getTreeView() {
 		return treeView;
 	}
@@ -398,7 +403,8 @@ public class MainController {
 	}
 	
 	public void openAboutDialog(ActionEvent event) {
-		
+		AboutDialog aboutDialog = new AboutDialog(mainApp, stage);
+		aboutDialog.present();
 	}
 	
 	public void selectProteinGroup(ProteinGroup proteinGroup) {

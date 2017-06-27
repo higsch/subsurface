@@ -201,7 +201,7 @@
                      <children>
                         <ImageView preserveRatio="true">
                            <image>
-                              <Image url="@TUM_Web_Logo_blau.png" />
+                              <Image url="@../../resources/TUM_Web_Logo_blau.png" />
                            </image>
                         </ImageView>
                         <Label alignment="CENTER" contentDisplay="CENTER" minWidth="77.0" nodeOrientation="LEFT_TO_RIGHT" text="Sieber Lab" textAlignment="RIGHT" />
