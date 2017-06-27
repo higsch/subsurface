@@ -1,0 +1,13 @@
+.choice-box:focused {
+	-fx-border-color: #3070b3;
+}
+
+.menu-item:hover, .menu-item:focused {
+	-fx-background-color: #3070b3;
+}
+
+#buttonBox {
+	-fx-padding: 5px 0 0 0;
+	-fx-border-width: 1px 0 0 0;
+	-fx-border-color: #ccc;
+}
