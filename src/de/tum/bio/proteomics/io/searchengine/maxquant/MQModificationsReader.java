@@ -1,4 +1,4 @@
-package de.tum.bio.proteomics.io.maxquant;
+package de.tum.bio.proteomics.io.searchengine.maxquant;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
