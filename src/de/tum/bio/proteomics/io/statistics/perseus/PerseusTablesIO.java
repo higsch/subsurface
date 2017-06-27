@@ -1,4 +1,4 @@
-	package de.tum.bio.proteomics.io.perseus;
+	package de.tum.bio.proteomics.io.statistics.perseus;
 
 import java.util.HashMap;
 import java.util.Map;

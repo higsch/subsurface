@@ -1,4 +1,4 @@
-package de.tum.bio.proteomics.io;
+package de.tum.bio.proteomics.io.fasta;
 
 import java.io.BufferedReader;
 import java.io.IOException;

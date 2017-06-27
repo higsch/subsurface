@@ -1,4 +1,4 @@
-package de.tum.bio.proteomics.io.perseus;
+package de.tum.bio.proteomics.io.statistics.perseus;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 
 import de.tum.bio.proteomics.StatisticsFile;
 import de.tum.bio.proteomics.headers.StatisticsTableHeaders;
-import de.tum.bio.proteomics.io.StatisticsReader;
+import de.tum.bio.proteomics.io.statistics.StatisticsReader;
 import de.tum.bio.utils.SeparatedTextReader;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;

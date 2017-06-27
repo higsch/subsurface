@@ -1,9 +1,9 @@
-package de.tum.bio.proteomics.io;
+package de.tum.bio.proteomics.io.fasta;
 
 import java.io.IOException;
 
 import de.tum.bio.proteomics.FastaFile;
-import de.tum.bio.proteomics.io.FastaFileReader.DatabaseType;
+import de.tum.bio.proteomics.io.fasta.FastaFileReader.DatabaseType;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 

@@ -1,4 +1,4 @@
-package de.tum.bio.proteomics.io;
+package de.tum.bio.proteomics.io.statistics;
 
 import java.io.IOException;
 import java.util.Map;
