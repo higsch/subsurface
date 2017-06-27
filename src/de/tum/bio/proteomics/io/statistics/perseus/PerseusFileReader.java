@@ -27,8 +27,8 @@ import javafx.beans.property.StringProperty;
 
 public final class PerseusFileReader extends PerseusTablesIO implements StatisticsReader {
 	
-	DoubleProperty progressProperty = new SimpleDoubleProperty();
-	StringProperty statusProperty = new SimpleStringProperty();
+	private DoubleProperty progressProperty = new SimpleDoubleProperty();
+	private StringProperty statusProperty = new SimpleStringProperty();
 	
 	public PerseusFileReader() {
 		// empty
