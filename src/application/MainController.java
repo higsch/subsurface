@@ -76,6 +76,8 @@ public class MainController {
 	private IntegerProperty shownAnalysisId = new SimpleIntegerProperty(-1);
 	private IntegerProperty shownPeptideIdId = new SimpleIntegerProperty(-1);
 	
+	private Image logo = new Image(getClass().getResourceAsStream("/TUM_Web_Logo_blau.png"));
+	
 	private Image analysisIcon = new Image(getClass().getResourceAsStream("/icons/analysis.png"));
 	private Image peptideIdIcon = new Image(getClass().getResourceAsStream("/icons/peptideId.png"));
 	private Image statisticsIcon = new Image(getClass().getResourceAsStream("/icons/statistics.png"));
@@ -89,6 +91,9 @@ public class MainController {
 	MenuItem menuItemOpenFasta;
 	@FXML
 	MenuItem menuItemOpenMzIdentML;
+	
+	@FXML
+	ImageView logoView;
 	
 	@FXML
 	Button buttonOpenMaxQuant;
@@ -139,6 +144,9 @@ public class MainController {
 		this.mainApp = mainApp;
 		stage = mainApp.getStage();
 		analysisHandler.setController(this);
+		
+		logoView.setImage(logo);
+		
 		treeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		
 		treeView.setCellFactory(new Callback<TreeView<AnalysisTreeObject>, TreeCell<AnalysisTreeObject>>() {

@@ -199,7 +199,7 @@
                   <Region maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                   <VBox HBox.hgrow="NEVER">
                      <children>
-                        <ImageView preserveRatio="true">
+                        <ImageView fx:id="logoView" preserveRatio="true">
                            <image>
                               <Image url="@../../resources/TUM_Web_Logo_blau.png" />
                            </image>
