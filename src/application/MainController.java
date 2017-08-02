@@ -220,11 +220,13 @@ public class MainController {
         colPeptidesEndPosition.setCellValueFactory(new PropertyValueFactory<Peptide, Integer>("endPosition"));
         TableColumn<Peptide, Long> colPeptidesTotalIntensity = new TableColumn<>("Intensity");
         colPeptidesTotalIntensity.setCellValueFactory(new PropertyValueFactory<Peptide, Long>("totalIntensity"));
+        TableColumn<Peptide, Double> colPeptidesScore = new TableColumn<>("Score");
+        colPeptidesScore.setCellValueFactory(new PropertyValueFactory<Peptide, Double>("score"));
         TableColumn<Peptide, Long> colPeptidesMsmsCount = new TableColumn<>("MS/MS Count");
         colPeptidesMsmsCount.setCellValueFactory(new PropertyValueFactory<Peptide, Long>("msmsCount"));
         TableColumn<Peptide, String> colPeptidesMsmsIds = new TableColumn<>("MS/MS IDs");
         colPeptidesMsmsIds.setCellValueFactory(new PropertyValueFactory<Peptide, String>("msmsIds"));
-        tablePeptides.getColumns().addAll(colPeptidesSequence, colPeptidesStartPosition, colPeptidesEndPosition, colPeptidesTotalIntensity, colPeptidesMsmsCount, colPeptidesMsmsIds);
+        tablePeptides.getColumns().addAll(colPeptidesSequence, colPeptidesStartPosition, colPeptidesEndPosition, colPeptidesTotalIntensity, colPeptidesScore, colPeptidesMsmsCount, colPeptidesMsmsIds);
         
         // Initialize volcano plot
         volcanoPlotXAxis.setLabel("log2 Enrichment");

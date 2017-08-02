@@ -9,6 +9,7 @@ public enum PeptidesTableHeaders implements TableHeaders {
 		END_POSITION,
 		MSMSCOUNTS,
 		MSMSIDS,
+		SCORE,
 		PROTEINGROUPS_IDS,
 		EVIDENCE_IDS,
 		INTENSITY;

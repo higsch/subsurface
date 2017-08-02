@@ -6,8 +6,10 @@ import java.util.Map.Entry;
 
 import de.tum.bio.proteomics.analysis.AnalysisComponent;
 import de.tum.bio.proteomics.headers.PeptidesTableHeaders;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -26,6 +28,7 @@ public class Peptide extends AminoAcidSequence implements AnalysisComponent {
 	private IntegerProperty endPosition = new SimpleIntegerProperty();
 	private IntegerProperty msmsCount = new SimpleIntegerProperty();
 	private StringProperty msmsIds = new SimpleStringProperty();
+	private DoubleProperty score = new SimpleDoubleProperty();
 	private String evidenceIds;
 	private String proteinGroupsIds;
 	private LongProperty totalIntensity = new SimpleLongProperty();
@@ -61,6 +64,9 @@ public class Peptide extends AminoAcidSequence implements AnalysisComponent {
 		}
 		if (properties.get(PeptidesTableHeaders.MSMSIDS).length() > 0) {
 			setMsmsIds(properties.get(PeptidesTableHeaders.MSMSIDS));
+		}
+		if (properties.get(PeptidesTableHeaders.SCORE).length() > 0) {
+			setScore(Double.parseDouble(properties.get(PeptidesTableHeaders.SCORE)));
 		}
 		setProteinGroupsIds(properties.get(PeptidesTableHeaders.PROTEINGROUPS_IDS));
 		setEvidenceIds(properties.get(PeptidesTableHeaders.EVIDENCE_IDS));
@@ -119,6 +125,18 @@ public class Peptide extends AminoAcidSequence implements AnalysisComponent {
 	
 	public StringProperty msmsIdsProperty() {
 		return msmsIds;
+	}
+	
+	public void setScore(double score) {
+		this.score.set(score);
+	}
+	
+	public double getScore() {
+		return score.get();
+	}
+	
+	public DoubleProperty scoreProperty() {
+		return score;
 	}
 	
 	public void setEvidenceIds(String evidenceIds) {

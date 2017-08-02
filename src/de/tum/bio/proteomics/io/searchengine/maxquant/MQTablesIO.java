@@ -44,6 +44,7 @@ public abstract class MQTablesIO {
 			"Evidence IDs",
 			"MS/MS IDs",
 			"MS/MS Count",
+			"Score",
 			"Protein group IDs",
 			"Evidence IDs",
 			"Intensity"
@@ -96,6 +97,7 @@ public abstract class MQTablesIO {
 			put(PeptidesTableHeaders.END_POSITION, "End position");
 			put(PeptidesTableHeaders.MSMSCOUNTS, "MS/MS Count");
 			put(PeptidesTableHeaders.MSMSIDS, "MS/MS IDs");
+			put(PeptidesTableHeaders.SCORE, "Score");
 			put(PeptidesTableHeaders.PROTEINGROUPS_IDS, "Protein group IDs");
 			put(PeptidesTableHeaders.EVIDENCE_IDS, "Evidence IDs");
 			put(PeptidesTableHeaders.INTENSITY, "Intensity");
