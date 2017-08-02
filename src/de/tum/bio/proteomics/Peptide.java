@@ -10,6 +10,8 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 /**
  * Represents a peptide.
@@ -23,6 +25,7 @@ public class Peptide extends AminoAcidSequence implements AnalysisComponent {
 	private IntegerProperty startPosition = new SimpleIntegerProperty();
 	private IntegerProperty endPosition = new SimpleIntegerProperty();
 	private IntegerProperty msmsCount = new SimpleIntegerProperty();
+	private StringProperty msmsIds = new SimpleStringProperty();
 	private String evidenceIds;
 	private String proteinGroupsIds;
 	private LongProperty totalIntensity = new SimpleLongProperty();
@@ -55,6 +58,9 @@ public class Peptide extends AminoAcidSequence implements AnalysisComponent {
 		}
 		if (properties.get(PeptidesTableHeaders.MSMSCOUNTS).length() > 0) {
 			setMsmsCount(Integer.parseInt(properties.get(PeptidesTableHeaders.MSMSCOUNTS)));
+		}
+		if (properties.get(PeptidesTableHeaders.MSMSIDS).length() > 0) {
+			setMsmsIds(properties.get(PeptidesTableHeaders.MSMSIDS));
 		}
 		setProteinGroupsIds(properties.get(PeptidesTableHeaders.PROTEINGROUPS_IDS));
 		setEvidenceIds(properties.get(PeptidesTableHeaders.EVIDENCE_IDS));
@@ -101,6 +107,18 @@ public class Peptide extends AminoAcidSequence implements AnalysisComponent {
 	
 	public IntegerProperty msmsCountProperty() {
 		return msmsCount;
+	}
+	
+	public void setMsmsIds(String msmsIds) {
+		this.msmsIds.set(msmsIds);
+	}
+	
+	public String getMsmsIds() {
+		return msmsIds.get();
+	}
+	
+	public StringProperty msmsIdsProperty() {
+		return msmsIds;
 	}
 	
 	public void setEvidenceIds(String evidenceIds) {
