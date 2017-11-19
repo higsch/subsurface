@@ -1,0 +1,104 @@
+.round-button {
+	-fx-background-radius: 4em;
+}
+
+#mainMenuBar {
+	-fx-background-color: #999;
+}
+
+.menu:hover, .menu-item:hover, .menu:showing, .menu-item:focused {
+    -fx-background-color: #3070b3;
+}
+
+.tool-h-bar {
+	-fx-background-color: #999;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0 17px 5px 17px;
+}
+
+.tool-h-bar .button {
+	-fx-background-color: #999;
+    -fx-background-insets: 0, 1 1 1 0, 2 1 1 1;
+    -fx-background-radius: 4px;
+    -fx-border-color: #3070b3;
+    -fx-border-width: 2px 2px 2px 0;
+}
+
+.tool-h-bar .button:hover {
+	-fx-background-insets: 0, 1 1 1 0, 2 1 1 1;
+	-fx-background-color: #bbb;
+}
+
+.tool-h-bar .button.first {
+	-fx-border-width: 2px;
+	-fx-background-insets: 0, 1, 2 1 1 1;
+    -fx-border-radius: 3 0 0 3, 2 0 0 2, 2 0 0 2;
+}
+
+.tool-h-bar .button.last {
+	-fx-background-insets: 0, 1 1 1 0, 2 1 1 1;
+    -fx-border-radius: 0 3 3 0, 0 2 2 0, 0 2 2 0;
+}
+
+.tool-h-bar .button.first-and-last {
+	-fx-border-width: 2px;
+	-fx-background-insets: 0, 1, 2 1 1 1;
+    -fx-border-radius: 3 3 3 3, 2 2 2 2, 2 2 2 2;
+    /*-fx-background-insets: 0, 1 1 1 0, 2 1 1 1;*/
+}
+
+#treeView {
+	
+}
+
+#treeView .tree-cell:selected {
+	-fx-background-color: #3070b3;
+}
+
+.table-row-cell:selected {
+	-fx-background-color: #3070b3;
+}
+
+.table-around {
+	
+}
+
+.heading {
+	-fx-padding: 10px 0 10px 10px;
+	-fx-text-fill: #3070b3;
+}
+
+.volcano-plot {
+	-fx-background-color: #ffffff;
+}
+
+.volcano-plot .chart-content {
+	-fx-padding: 10px;
+	-fx-background: #ffffff;
+}
+
+.volcano-plot .chart-symbol {
+    -fx-background-color: #3070b3;
+    -fx-background-radius: 5px;
+    -fx-padding: 3px;
+}
+
+.volcano-plot .selected-point {
+	-fx-background-color: #f9423a;
+}
+
+.scroll-pane {
+	-fx-background: #ffffff;
+}
+
+.sequence-viewer {
+	-fx-background-color: #ffffff;
+}
+
+#progressBar {
+	-fx-accent: #3070b3;
+}
+
+#statusHBox {
+	-fx-background-color: #999;
+}
