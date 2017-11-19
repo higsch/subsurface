@@ -38,11 +38,13 @@ public class AaProfiler extends Profiler {
 	private Map<String, XYChart.Series<String, Double>> seriesMap;
 	private Map<String, XYChart.Series<String, Double>> normalizedSeriesMap;
 	private Map<String, List<Double>> doubleProfileMap;
-	private Map<String, Map<String, Double>> correlationMap;
+	private Map<String, Map<String, Double>> pearsonCorrelationMap;
+	private Map<String, Map<String, Double>> spearmanCorrelationMap;
 	
 	private ObservableList<XYChart.Series<String, Double>> chartSeries = FXCollections.observableArrayList();
 	private ObservableList<XYChart.Series<String, Double>> chartNormalizedSeries = FXCollections.observableArrayList();
-	private ObservableList<XYChart.Series<Integer, Double>> chartCorrelations = FXCollections.observableArrayList();
+	private ObservableList<XYChart.Series<Integer, Double>> chartPearsonCorrelations = FXCollections.observableArrayList();
+	private ObservableList<XYChart.Series<Integer, Double>> chartSpearmanCorrelations = FXCollections.observableArrayList();
 	
 	private ObservableList<String> selectedExperiments = FXCollections.observableArrayList();
 	
@@ -116,8 +118,12 @@ public class AaProfiler extends Profiler {
 		return chartNormalizedSeries;
 	}
 	
-	public ObservableList<XYChart.Series<Integer, Double>> getCorrelations() {
-		return chartCorrelations;
+	public ObservableList<XYChart.Series<Integer, Double>> getPearsonCorrelations() {
+		return chartPearsonCorrelations;
+	}
+	
+	public ObservableList<XYChart.Series<Integer, Double>> getSpearmanCorrelations() {
+		return chartSpearmanCorrelations;
 	}
 	
 	public void init() {
@@ -134,7 +140,8 @@ public class AaProfiler extends Profiler {
 				
 				updateMessage("Calculate correlation coefficients...");
 				doubleProfileMap = getDoubleProfileMap(reducedProfileMap, selectedExperiments);
-				correlationMap = getCorrelationMap();
+				pearsonCorrelationMap = getPearsonCorrelationMap();
+				spearmanCorrelationMap = getSpearmanCorrelationMap();
 				
 				updateMessage("");
 				return null;
@@ -300,7 +307,7 @@ public class AaProfiler extends Profiler {
 		t.start();
 	}
 	
-	private Map<String, Map<String, Double>> getCorrelationMap() {
+	private Map<String, Map<String, Double>> getPearsonCorrelationMap() {
 		
 		// This map contains a map for each profile (position)
 		// Each submap comprises the Pearson Correlation to each other profile
@@ -314,7 +321,29 @@ public class AaProfiler extends Profiler {
 				}
 				
 				for (Entry<String, List<Double>> compProfile : doubleProfileMap.entrySet()) {
-					Double coeff = cor.correlateOverlap(Toolbox.convertToDoubleArray(profile.getValue().toArray()), Toolbox.convertToDoubleArray(compProfile.getValue().toArray()));
+					Double coeff = cor.correlateOverlapPearson(Toolbox.convertToDoubleArray(profile.getValue().toArray()), Toolbox.convertToDoubleArray(compProfile.getValue().toArray()));
+					map.get(profile.getKey()).put(compProfile.getKey(), (double) coeff);
+				}
+			}
+		}
+		return map;
+	}
+	
+	private Map<String, Map<String, Double>> getSpearmanCorrelationMap() {
+		
+		// This map contains a map for each profile (position)
+		// Each submap comprises the Pearson Correlation to each other profile
+		Map<String, Map<String, Double>> map = new HashMap<>();
+		Correlator cor = new Correlator();
+
+		for (Entry<String, List<Double>> profile : doubleProfileMap.entrySet()) {
+			if (profile.getValue().size() > 1) {
+				if (!map.containsKey(profile.getKey())) {
+					map.put(profile.getKey(), new HashMap<String, Double>());
+				}
+				
+				for (Entry<String, List<Double>> compProfile : doubleProfileMap.entrySet()) {
+					Double coeff = cor.correlateOverlapSpearman(Toolbox.convertToDoubleArray(profile.getValue().toArray()), Toolbox.convertToDoubleArray(compProfile.getValue().toArray()));
 					map.get(profile.getKey()).put(compProfile.getKey(), (double) coeff);
 				}
 			}
@@ -322,13 +351,19 @@ public class AaProfiler extends Profiler {
 		return map;
 	}
 
-	public void calculateAllRankedCorrelationSeriesByResidue(List<Character> residues, int offset) {
+	public void calculateAllRankedCorrelationSeriesByResidue(List<Character> residues, int offset, boolean pearson) {
 		Task<List<XYChart.Series<Integer, Double>>> task = new Task<List<XYChart.Series<Integer, Double>>>() {
 			@Override
 			protected List<XYChart.Series<Integer, Double>> call() throws Exception {
 				updateMessage("Update correlations...");
 				List<XYChart.Series<Integer, Double>> chartCorrelationsTmp = new ArrayList<>();
 				List<String> addedSeries = new ArrayList<>();
+				Map<String, Map<String, Double>> correlationMap;
+				if (pearson == true) {
+					correlationMap = pearsonCorrelationMap;
+				} else {
+					correlationMap = spearmanCorrelationMap;
+				}
 				for (int position = 1; position <= protein.getSequenceAsString().length(); position++) {
 					updateProgress((long) position, (long) protein.getSequenceAsString().length()); 
 					if (residues.contains(protein.getSequenceAsString().charAt(position - 1))) {
@@ -370,8 +405,13 @@ public class AaProfiler extends Profiler {
 			}
 		};
 		task.setOnSucceeded(workerStateEvent -> {
-			chartCorrelations.clear();
-			chartCorrelations.addAll(task.getValue());
+			if (pearson == true) {
+				chartPearsonCorrelations.clear();
+				chartPearsonCorrelations.addAll(task.getValue());
+			} else {
+				chartSpearmanCorrelations.clear();
+				chartSpearmanCorrelations.addAll(task.getValue());
+			}
 		});
 		task.exceptionProperty().addListener((observable, oldValue, newValue) ->  {
 			if(newValue != null) {
@@ -404,14 +444,15 @@ public class AaProfiler extends Profiler {
 				updateProgress(-1.0, 1.0);
 				updateMessage("Calculate values...");
 				doubleProfileMap = getDoubleProfileMap(reducedProfileMap, selectedExperiments);
-				correlationMap = getCorrelationMap();
+				pearsonCorrelationMap = getPearsonCorrelationMap();
 				updateProgress(0.0, 1.0);
 				updateMessage("");
 				return null;
 			}
 		};
 		task.setOnSucceeded(workerStateEvent -> {
-			calculateAllRankedCorrelationSeriesByResidue(residues, offset);
+			calculateAllRankedCorrelationSeriesByResidue(residues, offset, true);
+			calculateAllRankedCorrelationSeriesByResidue(residues, offset, false);
 		});
 		task.exceptionProperty().addListener((observable, oldValue, newValue) ->  {
 			if(newValue != null) {

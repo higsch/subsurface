@@ -234,11 +234,6 @@ public class MainController {
 		volcanoPlot.legendVisibleProperty().set(false);
 		
 		// Initialize sequence viewer wrapper
-		try {
-			enzymes.importEnzymes(new File("resources/enzymes.xml"));
-		} catch (IOException | XmlPullParserException e) {
-			e.printStackTrace();
-		}
 		choiceEnzyme.setConverter(new StringConverter<Enzyme>() {
 			@Override
 			public String toString(Enzyme enzyme) {
@@ -250,8 +245,13 @@ public class MainController {
 				return null;
 			}
 		});
-		choiceEnzyme.setItems(FXCollections.observableArrayList(enzymes.getEnzymes()));
-		choiceEnzyme.getSelectionModel().select(enzymes.getEnzyme("Trypsin"));
+		try {
+			enzymes.importEnzymes(new File(getClass().getResource("/utility/enzymes.xml").getFile()));
+			choiceEnzyme.setItems(FXCollections.observableArrayList(enzymes.getEnzymes()));
+			choiceEnzyme.getSelectionModel().select(enzymes.getEnzyme("Trypsin"));
+		} catch (IOException | XmlPullParserException e) {
+			e.printStackTrace();
+		}
 		
 		sequenceViewParent.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
 		

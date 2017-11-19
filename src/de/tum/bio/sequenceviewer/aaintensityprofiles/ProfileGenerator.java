@@ -53,14 +53,14 @@ public class ProfileGenerator extends Stage {
 			
 			setTitle("Profile view of " + aaProfiler.getProteinIds());
 			
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("ProfileView.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ProfileView.fxml"));
 			loader.setResources(ResourceBundle.getBundle("fontawesome"));
 			BorderPane root = (BorderPane) loader.load();
 			controller = loader.getController();
 			controller.init(this);
 			
 			Scene scene = new Scene(root, 1200, 900);
-			scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
+			scene.getStylesheets().add(getClass().getResource("/css/profileView.css").toExternalForm());
 			setScene(scene);
 			
 			setOnCloseRequest(event -> {

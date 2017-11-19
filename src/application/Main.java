@@ -39,11 +39,11 @@ public class Main extends Application {
 			// Load fonts
 	        Font.loadFont(Main.class.getResourceAsStream("/fontawesome-webfont.ttf"), 10);
 
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("Main.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Main.fxml"));
 			loader.setResources(ResourceBundle.getBundle("fontawesome"));
 			BorderPane root = (BorderPane) loader.load();
 			Scene scene = new Scene(root, 1500, 900);
-			scene.getStylesheets().add(getClass().getResource("main.css").toExternalForm());
+			scene.getStylesheets().add(getClass().getResource("/css/main.css").toExternalForm());
 			
 			// Generate a singleton of analysis handler
 			analysisHandler = AnalysisHandler.getInstance();

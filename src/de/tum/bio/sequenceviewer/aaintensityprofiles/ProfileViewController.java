@@ -67,11 +67,17 @@ public class ProfileViewController {
 	@FXML
 	VBox vBoxCorrelationMatrix;
 	@FXML
-	LineChart<Integer, Double> chartRankedCorrelations;
+	LineChart<Integer, Double> chartRankedPearsonCorrelations;
 	@FXML
-	NumberAxis xAxisRankedCorrelation;
+	NumberAxis xAxisRankedPearsonCorrelation;
 	@FXML
-	NumberAxis yAxisRankedCorrelation;
+	NumberAxis yAxisRankedPearsonCorrelation;
+	@FXML
+	LineChart<Integer, Double> chartRankedSpearmanCorrelations;
+	@FXML
+	NumberAxis xAxisRankedSpearmanCorrelation;
+	@FXML
+	NumberAxis yAxisRankedSpearmanCorrelation;
 	
 	@FXML
 	Label statusMessage;
@@ -89,14 +95,16 @@ public class ProfileViewController {
 		yAxis.setLabel("log2(intensity)");
 		xAxisNormalized.setLabel("Experiment");
 		yAxisNormalized.setLabel("Normalized log2(intensity)");
-		xAxisRankedCorrelation.setLabel("Rank");
-		yAxisRankedCorrelation.setLabel("Correlation");
+		xAxisRankedPearsonCorrelation.setLabel("Rank");
+		yAxisRankedPearsonCorrelation.setLabel("Pearson correlation");
+		xAxisRankedSpearmanCorrelation.setLabel("Rank");
+		yAxisRankedSpearmanCorrelation.setLabel("Spearman correlation");
 		
 		LinkedList<String> residues = new LinkedList<>(Arrays.asList(Toolbox.aminoAcidsSingleLetter()));
 		residues.addFirst("All");
 		
 		choiceAminoAcid.setItems(FXCollections.observableArrayList(residues));
-		choiceAminoAcid.getSelectionModel().select("K");
+		choiceAminoAcid.getSelectionModel().select("All");
 		
 		spinnerOffset.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-10, 10));
 		spinnerOffset.getValueFactory().setValue(0);
@@ -145,10 +153,11 @@ public class ProfileViewController {
 				}
 			});
 			
-			update(getAaListFromString("K"));
+			update(getAaListFromString(choiceAminoAcid.getSelectionModel().getSelectedItem()));
 			chart.setData(aaProfiler.getSeries());
 			chartNormalized.setData(aaProfiler.getNormalizedSeries());
-			chartRankedCorrelations.setData(aaProfiler.getCorrelations());
+			chartRankedPearsonCorrelations.setData(aaProfiler.getPearsonCorrelations());
+			chartRankedSpearmanCorrelations.setData(aaProfiler.getSpearmanCorrelations());
 		});
 	}
 	

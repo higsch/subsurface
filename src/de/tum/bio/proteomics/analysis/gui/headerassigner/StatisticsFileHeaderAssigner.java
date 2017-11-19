@@ -28,13 +28,13 @@ public class StatisticsFileHeaderAssigner extends Stage {
 		setTitle("Assign headers");
 		
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("StatisticsFileHeaderAssigner.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/StatisticsFileHeaderAssigner.fxml"));
 			BorderPane root = (BorderPane) loader.load();
 			controller = loader.getController();
 			controller.init(this, FXCollections.observableArrayList(SeparatedTextReader.readFirstLine(filePath)));
 			
 			Scene scene = new Scene(root, 600, 200);
-			scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
+			scene.getStylesheets().add(getClass().getResource("/css/statisticsFileHeaderAssigner.css").toExternalForm());
 			setScene(scene);
 			
 			setOnCloseRequest(event -> {
